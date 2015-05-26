@@ -68,6 +68,9 @@ static uint32_t oom_count = 0;
 #define OOM_DEPTH 4
 #endif
 
+#define CREATE_TRACE_POINTS
+#include "trace/lowmemorykiller.h"
+
 static uint32_t lowmem_debug_level = 1;
 static short lowmem_adj[6] = {
 	0,
@@ -322,6 +325,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     p->comm, p->pid, oom_score_adj, tasksize);
 	}
 	if (selected) {
+<<<<<<< HEAD
 #if defined(CONFIG_CMA_PAGE_COUNTING)
 		lowmem_print(1, "Killing '%s' (%d), adj %hd,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
@@ -341,6 +345,12 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     nr_cma_inactive_file * (long)(PAGE_SIZE / 1024),
 			     nr_cma_active_file * (long)(PAGE_SIZE / 1024));
 #else
+=======
+		long cache_size = other_file * (long)(PAGE_SIZE / 1024);
+		long cache_limit = minfree * (long)(PAGE_SIZE / 1024);
+		long free = other_free * (long)(PAGE_SIZE / 1024);
+		trace_lowmemory_kill(selected, cache_size, cache_limit, free);
+>>>>>>> 722b80d... lowmemorykiller: trace kill events.
 		lowmem_print(1, "Killing '%s' (%d), adj %hd,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
 				"   cache %ldkB is below limit %ldkB for oom_score_adj %hd\n" \
@@ -350,13 +360,16 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     selected_oom_score_adj,
 			     selected_tasksize * (long)(PAGE_SIZE / 1024),
 			     current->comm, current->pid,
-			     other_file * (long)(PAGE_SIZE / 1024),
-			     minfree * (long)(PAGE_SIZE / 1024),
+			     cache_size, cache_limit,
 			     min_score_adj,
+<<<<<<< HEAD
 			     other_free * (long)(PAGE_SIZE / 1024),
 			     !!current_is_kswapd(),
 			     nr_cma_free, sc->priority);
 #endif
+=======
+			     free);
+>>>>>>> 722b80d... lowmemorykiller: trace kill events.
 		lowmem_deathpending_timeout = jiffies + HZ;
 		send_sig(SIGKILL, selected, 0);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
