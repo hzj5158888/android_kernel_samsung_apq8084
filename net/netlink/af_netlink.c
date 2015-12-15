@@ -2546,6 +2546,18 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
 	} else
 		atomic_inc(&skb->users);
 
+<<<<<<< HEAD
+=======
+	cb->start = control->start;
+	cb->dump = control->dump;
+	cb->done = control->done;
+	cb->nlh = nlh;
+	cb->data = control->data;
+	cb->module = control->module;
+	cb->min_dump_alloc = control->min_dump_alloc;
+	cb->skb = skb;
+
+>>>>>>> c81cfed... BACKPORT: netlink: add a start callback for starting a netlink dump
 	sk = netlink_lookup(sock_net(ssk), ssk->sk_protocol, NETLINK_CB(skb).portid);
 	if (sk == NULL) {
 		ret = -ECONNREFUSED;
@@ -2578,6 +2590,9 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
 	nlk->cb_running = true;
 
 	mutex_unlock(nlk->cb_mutex);
+
+	if (cb->start)
+		cb->start(cb);
 
 	ret = netlink_dump(sk);
 	sock_put(sk);
