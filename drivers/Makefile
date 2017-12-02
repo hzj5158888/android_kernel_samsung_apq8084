@@ -174,3 +174,6 @@ obj-$(CONFIG_BATTERY_SAMSUNG)	+= battery/
 obj-$(CONFIG_SENSORS_FINGERPRINT)	+= fingerprint/
 
 obj-$(CONFIG_IRLED_GPIO)	+= irled/
+
+# Android
+obj-$(CONFIG_ANDROID)	+= android/
