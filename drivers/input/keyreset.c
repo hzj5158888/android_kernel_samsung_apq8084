@@ -27,16 +27,9 @@ struct keyreset_state {
 	int restart_requested;
 	int (*reset_fn)(void);
 	struct platform_device *pdev_child;
-<<<<<<< HEAD
 };
 
 static void do_restart(void)
-=======
-	struct work_struct restart_work;
-};
-
-static void do_restart(struct work_struct *unused)
->>>>>>> a-3.10
 {
 	sys_sync();
 	kernel_restart(NULL);
@@ -51,11 +44,7 @@ static void do_reset_fn(void *priv)
 		state->restart_requested = state->reset_fn();
 	} else {
 		pr_info("keyboard reset\n");
-<<<<<<< HEAD
 		do_restart();
-=======
-		schedule_work(&state->restart_work);
->>>>>>> a-3.10
 		state->restart_requested = 1;
 	}
 }
@@ -80,10 +69,6 @@ static int keyreset_probe(struct platform_device *pdev)
 	if (!state->pdev_child)
 		return -ENOMEM;
 	state->pdev_child->dev.parent = &pdev->dev;
-<<<<<<< HEAD
-=======
-	INIT_WORK(&state->restart_work, do_restart);
->>>>>>> a-3.10
 
 	keyp = pdata->keys_down;
 	while ((key = *keyp++)) {

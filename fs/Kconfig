@@ -200,10 +200,7 @@ if MISC_FILESYSTEMS
 source "fs/adfs/Kconfig"
 source "fs/affs/Kconfig"
 source "fs/ecryptfs/Kconfig"
-<<<<<<< HEAD
 source "fs/scfs/Kconfig"
-=======
->>>>>>> a-3.10
 source "fs/sdcardfs/Kconfig"
 source "fs/hfs/Kconfig"
 source "fs/hfsplus/Kconfig"

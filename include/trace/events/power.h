@@ -73,7 +73,6 @@ TRACE_EVENT(cpu_frequency_limits,
 		  (unsigned long)__entry->cpu_id)
 );
 
-<<<<<<< HEAD
 TRACE_EVENT(cpu_frequency_switch_start,
 
 	TP_PROTO(unsigned int start_freq, unsigned int end_freq,
@@ -150,8 +149,6 @@ DEFINE_EVENT(set, cpufreq_freq_synced,
 	TP_ARGS(cpu_id, currfreq, load)
 );
 
-=======
->>>>>>> a-3.10
 TRACE_EVENT(machine_suspend,
 
 	TP_PROTO(unsigned int state),

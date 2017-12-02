@@ -1,11 +1,6 @@
 #ifndef _LINUX_JBD_STATE_H
 #define _LINUX_JBD_STATE_H
 
-<<<<<<< HEAD
-=======
-#include <linux/bit_spinlock.h>
-
->>>>>>> a-3.10
 static inline struct buffer_head *jh2bh(struct journal_head *jh)
 {
 	return jh->b_bh;

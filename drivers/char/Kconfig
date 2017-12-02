@@ -600,13 +600,6 @@ config DEVPORT
 	help
 	  Say Y here if you want to support the /dev/port device. The /dev/port
 	  device is similar to /dev/mem, but for I/O ports.
-<<<<<<< HEAD
-=======
-
-config DCC_TTY
-	tristate "DCC tty driver"
-	depends on ARM
->>>>>>> a-3.10
 
 source "drivers/s390/char/Kconfig"
 

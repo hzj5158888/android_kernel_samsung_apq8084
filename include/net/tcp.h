@@ -294,10 +294,7 @@ extern int sysctl_tcp_thin_dupack;
 extern int sysctl_tcp_early_retrans;
 extern int sysctl_tcp_limit_output_bytes;
 extern int sysctl_tcp_challenge_ack_limit;
-<<<<<<< HEAD
 extern int sysctl_tcp_min_tso_segs;
-=======
->>>>>>> a-3.10
 extern int sysctl_tcp_default_init_rwnd;
 
 extern atomic_long_t tcp_memory_allocated;

@@ -23,7 +23,6 @@ config ION_TEGRA
 	help
 	  Choose this option if you wish to use ion on an nVidia Tegra.
 
-<<<<<<< HEAD
 config ION_MSM
 	tristate "Ion for MSM"
 	depends on ARCH_MSM && ION
@@ -33,12 +32,3 @@ config ION_MSM
 config DTCP_ION_PHYS
 	bool "dtcp msm ion phys ioctl"
 	default n
-=======
-config ION_POOL_CACHE_POLICY
-	bool "Ion set page pool cache policy"
-	depends on ION
-	default y if X86
-	help
-	  Choose this option if need to explicity set cache policy of the
-	  pages in the page pool.
->>>>>>> a-3.10

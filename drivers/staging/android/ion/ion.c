@@ -38,14 +38,10 @@
 #include <linux/debugfs.h>
 #include <linux/dma-buf.h>
 #include <linux/idr.h>
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 #include <linux/msm_ion.h>
 #include <trace/events/kmem.h>
 
 
-=======
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 #include "ion.h"
 #include "ion_priv.h"
 #include "compat_ion.h"
@@ -98,11 +94,7 @@ struct ion_client {
 	struct rb_root handles;
 	struct idr idr;
 	struct mutex lock;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	char *name;
-=======
-	const char *name;
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	char *display_name;
 	int display_serial;
 	struct task_struct *task;
@@ -234,16 +226,10 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 			"heap->ops->map_dma should return ERR_PTR on error"))
 		table = ERR_PTR(-EINVAL);
 	if (IS_ERR(table)) {
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		heap->ops->free(buffer);
 		kfree(buffer);
 		return ERR_PTR(PTR_ERR(table));
-=======
-		ret = -EINVAL;
-		goto err1;
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	}
-
 	buffer->sg_table = table;
 	if (ion_buffer_fault_user_mappings(buffer)) {
 		int num_pages = PAGE_ALIGN(buffer->size) / PAGE_SIZE;
@@ -253,7 +239,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 		buffer->pages = vmalloc(sizeof(struct page *) * num_pages);
 		if (!buffer->pages) {
 			ret = -ENOMEM;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 			goto err1;
 		}
 
@@ -266,17 +251,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 
 		if (ret)
 			goto err;
-=======
-			goto err;
-		}
-
-		for_each_sg(table->sgl, sg, table->nents, i) {
-			struct page *page = sg_page(sg);
-
-			for (j = 0; j < sg->length / PAGE_SIZE; j++)
-				buffer->pages[k++] = page++;
-		}
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	}
 
 	mutex_init(&buffer->lock);
@@ -300,7 +274,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 
 err:
 	heap->ops->unmap_dma(heap, buffer);
-err1:
 	heap->ops->free(buffer);
 err1:
 	if (buffer->pages)
@@ -435,7 +408,6 @@ static void ion_handle_get(struct ion_handle *handle)
 	kref_get(&handle->ref);
 }
 
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 /* Must hold the client lock */
 static struct ion_handle* ion_handle_get_check_overflow(struct ion_handle *handle)
 {
@@ -445,15 +417,9 @@ static struct ion_handle* ion_handle_get_check_overflow(struct ion_handle *handl
 	return handle;
 }
 
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 static int ion_handle_put_nolock(struct ion_handle *handle)
 {
-	int ret;
-
-	ret = kref_put(&handle->ref, ion_handle_destroy);
-
-	return ret;
+	return kref_put(&handle->ref, ion_handle_destroy);
 }
 
 int ion_handle_put(struct ion_handle *handle)
@@ -466,7 +432,6 @@ int ion_handle_put(struct ion_handle *handle)
 	mutex_unlock(&client->lock);
 
 	return ret;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 }
 
 /* Must hold the client lock */
@@ -513,10 +478,6 @@ static int user_ion_handle_put_nolock(struct ion_handle *handle)
 	return ret;
 }
 
-=======
-}
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 static struct ion_handle *ion_handle_lookup(struct ion_client *client,
 					    struct ion_buffer *buffer)
 {
@@ -524,10 +485,6 @@ static struct ion_handle *ion_handle_lookup(struct ion_client *client,
 
 	while (n) {
 		struct ion_handle *entry = rb_entry(n, struct ion_handle, node);
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
-=======
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		if (buffer < entry->buffer)
 			n = n->rb_left;
 		else if (buffer > entry->buffer)
@@ -545,15 +502,9 @@ static struct ion_handle *ion_handle_get_by_id_nolock(struct ion_client *client,
 
 	handle = idr_find(&client->idr, id);
 	if (handle)
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		return ion_handle_get_check_overflow(handle);
 
 	return ERR_PTR(-EINVAL);
-=======
-		ion_handle_get(handle);
-
-	return handle ? handle : ERR_PTR(-EINVAL);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 }
 
 struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
@@ -566,7 +517,6 @@ struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
 	mutex_unlock(&client->lock);
 
 	return handle;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 }
 
 static bool ion_handle_validate(struct ion_client *client,
@@ -578,19 +528,6 @@ static bool ion_handle_validate(struct ion_client *client,
 
 static int ion_handle_add(struct ion_client *client, struct ion_handle *handle)
 {
-=======
-}
-
-static bool ion_handle_validate(struct ion_client *client,
-				struct ion_handle *handle)
-{
-	WARN_ON(!mutex_is_locked(&client->lock));
-	return (idr_find(&client->idr, handle->id) == handle);
-}
-
-static int ion_handle_add(struct ion_client *client, struct ion_handle *handle)
-{
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	int id;
 	struct rb_node **p = &client->handles.rb_node;
 	struct rb_node *parent = NULL;
@@ -629,7 +566,6 @@ static struct ion_handle *__ion_alloc(struct ion_client *client, size_t len,
 	struct ion_buffer *buffer = NULL;
 	struct ion_heap *heap;
 	int ret;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	unsigned long secure_allocation = flags & ION_FLAG_SECURE;
 	const unsigned int MAX_DBG_STR_LEN = 64;
 	char dbg_str[MAX_DBG_STR_LEN];
@@ -644,8 +580,6 @@ static struct ion_handle *__ion_alloc(struct ion_client *client, size_t len,
 	 * place (in code) but should not be used.
 	 */
 	flags |= ION_FLAG_CACHED_NEEDS_SYNC;
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 
 	pr_debug("%s: len %zu align %zu heap_id_mask %u flags %x\n", __func__,
 		 len, align, heap_id_mask, flags);
@@ -672,11 +606,8 @@ static struct ion_handle *__ion_alloc(struct ion_client *client, size_t len,
 		trace_ion_alloc_buffer_start(client->name, heap->name, len,
 					     heap_id_mask, flags);
 		buffer = ion_buffer_create(heap, dev, len, align, flags);
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		trace_ion_alloc_buffer_end(client->name, heap->name, len,
 					   heap_id_mask, flags);
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		if (!IS_ERR(buffer))
 			break;
 
@@ -728,11 +659,8 @@ static struct ion_handle *__ion_alloc(struct ion_client *client, size_t len,
 		return handle;
 
 	mutex_lock(&client->lock);
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	if (grab_handle)
 		ion_handle_get(handle);
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	ret = ion_handle_add(client, handle);
 	mutex_unlock(&client->lock);
 	if (ret) {
@@ -776,15 +704,11 @@ static void user_ion_free_nolock(struct ion_client *client, struct ion_handle *h
 		WARN(1, "%s: invalid handle passed to free.\n", __func__);
 		return;
 	}
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	if (!handle->user_ref_count > 0) {
 		WARN(1, "%s: User does not have access!\n", __func__);
 		return;
 	}
 	user_ion_handle_put_nolock(handle);
-=======
-	ion_handle_put_nolock(handle);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 }
 
 void ion_free(struct ion_client *client, struct ion_handle *handle)
@@ -919,38 +843,9 @@ void ion_unmap_kernel(struct ion_client *client, struct ion_handle *handle)
 }
 EXPORT_SYMBOL(ion_unmap_kernel);
 
-static struct mutex debugfs_mutex;
-static struct rb_root *ion_root_client;
-static int is_client_alive(struct ion_client *client)
-{
-	struct rb_node *node;
-	struct ion_client *tmp;
-	struct ion_device *dev;
-
-	node = ion_root_client->rb_node;
-	dev = container_of(ion_root_client, struct ion_device, clients);
-
-	down_read(&dev->lock);
-	while (node) {
-		tmp = rb_entry(node, struct ion_client, node);
-		if (client < tmp) {
-			node = node->rb_left;
-		} else if (client > tmp) {
-			node = node->rb_right;
-		} else {
-			up_read(&dev->lock);
-			return 1;
-		}
-	}
-
-	up_read(&dev->lock);
-	return 0;
-}
-
 static int ion_debug_client_show(struct seq_file *s, void *unused)
 {
 	struct ion_client *client = s->private;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	struct rb_node *n, *cnode;
 	bool found = false;
 
@@ -979,27 +874,12 @@ static int ion_debug_client_show(struct seq_file *s, void *unused)
 	seq_printf(s, "%16.16s: %16.16s : %16.16s : %12.12s\n",
 			"heap_name", "size_in_bytes", "handle refcount",
 			"buffer");
-=======
-	struct rb_node *n;
-	size_t sizes[ION_NUM_HEAP_IDS] = {0};
-	const char *names[ION_NUM_HEAP_IDS] = {NULL};
-	int i;
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
-
-	mutex_lock(&debugfs_mutex);
-	if (!is_client_alive(client)) {
-		seq_printf(s, "ion_client 0x%p dead, can't dump its buffers\n",
-			   client);
-		mutex_unlock(&debugfs_mutex);
-		return 0;
-	}
 
 	mutex_lock(&client->lock);
 	for (n = rb_first(&client->handles); n; n = rb_next(n)) {
 		struct ion_handle *handle = rb_entry(n, struct ion_handle,
 						     node);
 
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		seq_printf(s, "%16.16s: %16zx : %16d : %12pK",
 				handle->buffer->heap->name,
 				handle->buffer->size,
@@ -1007,20 +887,6 @@ static int ion_debug_client_show(struct seq_file *s, void *unused)
 				handle->buffer);
 
 		seq_printf(s, "\n");
-=======
-		if (!names[id])
-			names[id] = handle->buffer->heap->name;
-		sizes[id] += handle->buffer->size;
-	}
-	mutex_unlock(&client->lock);
-	mutex_unlock(&debugfs_mutex);
-
-	seq_printf(s, "%16.16s: %16.16s\n", "heap_name", "size_in_bytes");
-	for (i = 0; i < ION_NUM_HEAP_IDS; i++) {
-		if (!names[i])
-			continue;
-		seq_printf(s, "%16.16s: %16zu\n", names[i], sizes[i]);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	}
 	mutex_unlock(&client->lock);
 	up_write(&ion_dev->lock);
@@ -1044,17 +910,9 @@ static int ion_get_client_serial(const struct rb_root *root,
 {
 	int serial = -1;
 	struct rb_node *node;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	for (node = rb_first(root); node; node = rb_next(node)) {
 		struct ion_client *client = rb_entry(node, struct ion_client,
 						node);
-=======
-
-	for (node = rb_first(root); node; node = rb_next(node)) {
-		struct ion_client *client = rb_entry(node, struct ion_client,
-						node);
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		if (strcmp(client->name, name))
 			continue;
 		serial = max(serial, client->display_serial);
@@ -1098,10 +956,7 @@ struct ion_client *ion_client_create(struct ion_device *dev,
 	client->handles = RB_ROOT;
 	idr_init(&client->idr);
 	mutex_init(&client->lock);
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	client->task = task;
 	client->pid = pid;
 	client->name = kstrdup(name, GFP_KERNEL);
@@ -1160,7 +1015,6 @@ void ion_client_destroy(struct ion_client *client)
 	struct rb_node *n;
 
 	pr_debug("%s: %d\n", __func__, __LINE__);
-	mutex_lock(&debugfs_mutex);
 	while ((n = rb_first(&client->handles))) {
 		struct ion_handle *handle = rb_entry(n, struct ion_handle,
 						     node);
@@ -1180,7 +1034,6 @@ void ion_client_destroy(struct ion_client *client)
 	kfree(client->display_name);
 	kfree(client->name);
 	kfree(client);
-	mutex_unlock(&debugfs_mutex);
 }
 EXPORT_SYMBOL(ion_client_destroy);
 
@@ -1452,14 +1305,12 @@ static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 static void ion_dma_buf_release(struct dma_buf *dmabuf)
 {
 	struct ion_buffer *buffer = dmabuf->priv;
-
 	ion_buffer_put(buffer);
 }
 
 static void *ion_dma_buf_kmap(struct dma_buf *dmabuf, unsigned long offset)
 {
 	struct ion_buffer *buffer = dmabuf->priv;
-
 	return buffer->vaddr + offset * PAGE_SIZE;
 }
 
@@ -1582,11 +1433,7 @@ struct ion_handle *ion_import_dma_buf(struct ion_client *client, int fd)
 	/* if a handle exists for this buffer just take a reference to it */
 	handle = ion_handle_lookup(client, buffer);
 	if (!IS_ERR(handle)) {
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		handle = ion_handle_get_check_overflow(handle);
-=======
-		ion_handle_get(handle);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		mutex_unlock(&client->lock);
 		goto end;
 	}
@@ -1654,7 +1501,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	struct ion_handle *cleanup_handle = NULL;
 	int ret = 0;
 	unsigned int dir;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 
 	union {
 		struct ion_fd_data fd;
@@ -1686,39 +1532,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		pass_to_user(handle);
 		data.allocation.handle = handle->id;
 
-=======
-
-	union {
-		struct ion_fd_data fd;
-		struct ion_allocation_data allocation;
-		struct ion_handle_data handle;
-		struct ion_custom_data custom;
-	} data;
-
-	dir = ion_ioctl_dir(cmd);
-
-	if (_IOC_SIZE(cmd) > sizeof(data))
-		return -EINVAL;
-
-	if (dir & _IOC_WRITE)
-		if (copy_from_user(&data, (void __user *)arg, _IOC_SIZE(cmd)))
-			return -EFAULT;
-
-	switch (cmd) {
-	case ION_IOC_ALLOC:
-	{
-		struct ion_handle *handle;
-
-		handle = ion_alloc(client, data.allocation.len,
-						data.allocation.align,
-						data.allocation.heap_id_mask,
-						data.allocation.flags);
-		if (IS_ERR(handle))
-			return PTR_ERR(handle);
-
-		data.allocation.handle = handle->id;
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		cleanup_handle = handle;
 		break;
 	}
@@ -1732,11 +1545,7 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			mutex_unlock(&client->lock);
 			return PTR_ERR(handle);
 		}
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		user_ion_free_nolock(client, handle);
-=======
-		ion_free_nolock(client, handle);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		ion_handle_put_nolock(handle);
 		mutex_unlock(&client->lock);
 		break;
@@ -1758,7 +1567,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	case ION_IOC_IMPORT:
 	{
 		struct ion_handle *handle;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		handle = ion_import_dma_buf(client, data.fd.fd);
 		if (IS_ERR(handle)) {
 			ret = PTR_ERR(handle);
@@ -1769,14 +1577,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 			else
 				data.handle.handle = handle->id;
 		}
-=======
-
-		handle = ion_import_dma_buf(client, data.fd.fd);
-		if (IS_ERR(handle))
-			ret = PTR_ERR(handle);
-		else
-			data.handle.handle = handle->id;
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 		break;
 	}
 	case ION_IOC_SYNC:
@@ -1788,16 +1588,12 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	{
 		if (!dev->custom_ioctl)
 			return -ENOTTY;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 
 		if (dev->custom_compat_ioctl)
 			ret = dev->custom_compat_ioctl(client, data.custom.cmd,
 						data.custom.arg);
 		else
 			ret = dev->custom_ioctl(client, data.custom.cmd,
-=======
-		ret = dev->custom_ioctl(client, data.custom.cmd,
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 						data.custom.arg);
 		break;
 	}
@@ -1816,7 +1612,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 
 	if (dir & _IOC_READ) {
 		if (copy_to_user((void __user *)arg, &data, _IOC_SIZE(cmd))) {
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 			if (cleanup_handle) {
 				mutex_lock(&client->lock);
 				user_ion_free_nolock(client, cleanup_handle);
@@ -1828,13 +1623,6 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 	}
 	if (cleanup_handle)
 		ion_handle_put(cleanup_handle);
-=======
-			if (cleanup_handle)
-				ion_free(client, cleanup_handle);
-			return -EFAULT;
-		}
-	}
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	return ret;
 }
 
@@ -2001,16 +1789,11 @@ static int ion_debug_heap_show(struct seq_file *s, void *unused)
 	seq_printf(s, "%16.s %16.s %16.s\n", "client", "pid", "size");
 	seq_printf(s, "----------------------------------------------------\n");
 
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	down_read(&dev->lock);
-=======
-	mutex_lock(&debugfs_mutex);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	for (n = rb_first(&dev->clients); n; n = rb_next(n)) {
 		struct ion_client *client = rb_entry(n, struct ion_client,
 						     node);
 		size_t size = ion_debug_heap_total(client, heap->id);
-
 		if (!size)
 			continue;
 		if (client->task) {
@@ -2024,12 +1807,7 @@ static int ion_debug_heap_show(struct seq_file *s, void *unused)
 				   client->pid, size);
 		}
 	}
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	up_read(&dev->lock);
-=======
-	mutex_unlock(&debugfs_mutex);
-
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	seq_printf(s, "----------------------------------------------------\n");
 	seq_printf(s, "orphaned allocations (info is from last known client):"
 		   "\n");
@@ -2169,14 +1947,8 @@ void ion_device_add_heap(struct ion_device *dev, struct ion_heap *heap)
 
 	if (!debug_file) {
 		char buf[256], *path;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		path = dentry_path(dev->heaps_debug_root, buf, 256);
 		pr_err("Failed to created heap debugfs at %s/%s\n",
-=======
-
-		path = dentry_path(dev->heaps_debug_root, buf, 256);
-		pr_err("Failed to create heap debugfs at %s/%s\n",
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 			path, heap->name);
 	}
 
@@ -2190,14 +1962,8 @@ void ion_device_add_heap(struct ion_device *dev, struct ion_heap *heap)
 			&debug_shrink_fops);
 		if (!debug_file) {
 			char buf[256], *path;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 			path = dentry_path(dev->heaps_debug_root, buf, 256);
 			pr_err("Failed to created heap shrinker debugfs at %s/%s\n",
-=======
-
-			path = dentry_path(dev->heaps_debug_root, buf, 256);
-			pr_err("Failed to create heap shrinker debugfs at %s/%s\n",
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 				path, debug_name);
 		}
 	}
@@ -2277,12 +2043,7 @@ debugfs_done:
 	init_rwsem(&idev->lock);
 	plist_head_init(&idev->heaps);
 	idev->clients = RB_ROOT;
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 	ion_dev = idev;
-=======
-	ion_root_client = &idev->clients;
-	mutex_init(&debugfs_mutex);
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 	return idev;
 }
 
@@ -2304,7 +2065,6 @@ void __init ion_reserve(struct ion_platform_data *data)
 
 		if (data->heaps[i].base == 0) {
 			phys_addr_t paddr;
-
 			paddr = memblock_alloc_base(data->heaps[i].size,
 						    data->heaps[i].align,
 						    MEMBLOCK_ALLOC_ANYWHERE);
@@ -2319,19 +2079,11 @@ void __init ion_reserve(struct ion_platform_data *data)
 			int ret = memblock_reserve(data->heaps[i].base,
 					       data->heaps[i].size);
 			if (ret)
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 				pr_err("memblock reserve of %zx@%pa failed\n",
-=======
-				pr_err("memblock reserve of %zx@%lx failed\n",
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 				       data->heaps[i].size,
 				       &data->heaps[i].base);
 		}
-<<<<<<< HEAD:drivers/staging/android/ion/ion.c
 		pr_info("%s: %s reserved base %pa size %zu\n", __func__,
-=======
-		pr_info("%s: %s reserved base %lx size %zu\n", __func__,
->>>>>>> a-3.10:drivers/staging/android/ion/ion.c
 			data->heaps[i].name,
 			&data->heaps[i].base,
 			data->heaps[i].size);

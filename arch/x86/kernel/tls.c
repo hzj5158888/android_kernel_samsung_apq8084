@@ -29,7 +29,6 @@ static int get_free_idx(void)
 
 static bool tls_desc_okay(const struct user_desc *info)
 {
-<<<<<<< HEAD
 	/*
 	 * For historical reasons (i.e. no one ever documented how any
 	 * of the segmentation APIs work), user programs can and do
@@ -52,9 +51,6 @@ static bool tls_desc_okay(const struct user_desc *info)
 	 * the distinction between modes 1 and 0x11.
 	 */
 	if (LDT_empty(info) || LDT_zero(info))
-=======
-	if (LDT_empty(info))
->>>>>>> a-3.10
 		return true;
 
 	/*
@@ -64,7 +60,6 @@ static bool tls_desc_okay(const struct user_desc *info)
 	if (!info->seg_32bit)
 		return false;
 
-<<<<<<< HEAD
 	/* Only allow data segments in the TLS array. */
 	if (info->contents > 1)
 		return false;
@@ -81,8 +76,6 @@ static bool tls_desc_okay(const struct user_desc *info)
 	if (info->seg_not_present)
 		return false;
 
-=======
->>>>>>> a-3.10
 	return true;
 }
 

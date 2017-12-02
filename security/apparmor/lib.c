@@ -103,7 +103,4 @@ void *kvmalloc(size_t size)
 	}
 	return buffer;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> a-3.10

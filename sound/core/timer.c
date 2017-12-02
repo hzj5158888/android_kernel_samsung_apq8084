@@ -514,16 +514,8 @@ static int _snd_timer_stop(struct snd_timer_instance *timeri, int event)
 		return -ENXIO;
 
 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE) {
-<<<<<<< HEAD
 		spin_lock_irqsave(&slave_active_lock, flags);
 		if (!(timeri->flags & SNDRV_TIMER_IFLG_RUNNING)) {
-=======
-		if (!keep_flag) {
-			spin_lock_irqsave(&slave_active_lock, flags);
-			timeri->flags &= ~SNDRV_TIMER_IFLG_RUNNING;
-			list_del_init(&timeri->ack_list);
-			list_del_init(&timeri->active_list);
->>>>>>> a-3.10
 			spin_unlock_irqrestore(&slave_active_lock, flags);
 			return -EBUSY;
 		}
@@ -1977,10 +1969,7 @@ static ssize_t snd_timer_user_read(struct file *file, char __user *buffer,
 		buffer += unit;
 	}
  _error:
-<<<<<<< HEAD
 	spin_unlock_irq(&tu->qlock);
-=======
->>>>>>> a-3.10
 	mutex_unlock(&tu->ioctl_lock);
 	return result > 0 ? result : err;
 }

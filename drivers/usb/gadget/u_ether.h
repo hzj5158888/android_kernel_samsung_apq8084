@@ -54,7 +54,6 @@ struct gether {
 	bool				is_fixed;
 	u32				fixed_out_len;
 	u32				fixed_in_len;
-<<<<<<< HEAD
 
 	unsigned			ul_max_pkts_per_xfer;
 	uint32_t			dl_max_pkts_per_xfer;
@@ -62,11 +61,6 @@ struct gether {
 	bool				multi_pkt_xfer;
 	bool				rx_trigger_enabled;
 	bool				rx_triggered;
-=======
-	unsigned		ul_max_pkts_per_xfer;
-	unsigned		dl_max_pkts_per_xfer;
-	bool				multi_pkt_xfer;
->>>>>>> a-3.10
 	struct sk_buff			*(*wrap)(struct gether *port,
 						struct sk_buff *skb);
 	int				(*unwrap)(struct gether *port,

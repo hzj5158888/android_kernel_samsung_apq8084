@@ -185,7 +185,6 @@ static void sdcardfs_canonical_path(const struct path *path,
 	sdcardfs_get_real_lower(path->dentry, actual_path);
 }
 
-<<<<<<< HEAD
 static int sdcardfs_d_delete(const struct dentry * dentry)
 {
 	return dentry->d_inode && !S_ISDIR(dentry->d_inode->i_mode);
@@ -193,9 +192,6 @@ static int sdcardfs_d_delete(const struct dentry * dentry)
 
 const struct dentry_operations sdcardfs_ci_dops = {
 	.d_delete	= sdcardfs_d_delete,
-=======
-const struct dentry_operations sdcardfs_ci_dops = {
->>>>>>> a-3.10
 	.d_revalidate	= sdcardfs_d_revalidate,
 	.d_release	= sdcardfs_d_release,
 	.d_hash	= sdcardfs_hash_ci,

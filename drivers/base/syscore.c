@@ -11,10 +11,7 @@
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/wakeup_reason.h>
-<<<<<<< HEAD
 #include <linux/irq.h>
-=======
->>>>>>> a-3.10
 
 static LIST_HEAD(syscore_ops_list);
 static DEFINE_MUTEX(syscore_ops_lock);

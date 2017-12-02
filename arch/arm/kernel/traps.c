@@ -38,7 +38,6 @@
 #include <mach/sec_debug.h>
 #endif
 
-<<<<<<< HEAD
 #include <trace/events/exception.h>
 
 static const char *handler[]= {
@@ -48,9 +47,6 @@ static const char *handler[]= {
 	"interrupt",
 	"undefined instruction",
 };
-=======
-static const char *handler[]= { "prefetch abort", "data abort", "address exception", "interrupt" };
->>>>>>> a-3.10
 
 void *vectors_page;
 

@@ -682,15 +682,12 @@
  *	(&struct nl80211_vendor_cmd_info) of the supported vendor commands.
  *	This may also be sent as an event with the same attributes.
  *
-<<<<<<< HEAD
  * @NL80211_CMD_SET_QOS_MAP: Set Interworking QoS mapping for IP DSCP values.
  *	The QoS mapping information is included in %NL80211_ATTR_QOS_MAP. If
  *	that attribute is not included, QoS mapping is disabled. Since this
  *	QoS mapping is relevant for IP packets, it is only valid during an
  *	association. This is cleared on disassociation and AP restart.
  *
-=======
->>>>>>> a-3.10
  * @NL80211_CMD_MAX: highest used command number
  * @__NL80211_CMD_AFTER_LAST: internal use
  */
@@ -860,11 +857,8 @@ enum nl80211_commands {
 
 	NL80211_CMD_VENDOR,
 
-<<<<<<< HEAD
 	NL80211_CMD_SET_QOS_MAP,
 
-=======
->>>>>>> a-3.10
 	/* add new commands above here */
 
 	/* used to define NL80211_CMD_MAX below */
@@ -1534,10 +1528,6 @@ enum nl80211_commands {
  *
  * @NL80211_ATTR_MAC_HINT: MAC address recommendation as initial BSS
  * @NL80211_ATTR_WIPHY_FREQ_HINT: frequency of the recommended initial BSS
-<<<<<<< HEAD
-=======
- *
->>>>>>> a-3.10
  * @NL80211_ATTR_MAX_AP_ASSOC_STA: Device attribute that indicates how many
  *	associated stations are supported in AP mode (including P2P GO); u32.
  *	Since drivers may not have a fixed limit on the maximum number (e.g.,
@@ -1548,16 +1538,6 @@ enum nl80211_commands {
  * @NL80211_ATTR_TDLS_PEER_CAPABILITY: flags for TDLS peer capabilities, u32.
  *	As specified in the &enum nl80211_tdls_peer_capability.
  *
-<<<<<<< HEAD
-=======
- * @NL80211_ATTR_IFACE_SOCKET_OWNER: flag attribute, if set during interface
- *	creation then the new interface will be owned by the netlink socket
- *	that created it and will be destroyed when the socket is closed.
- *	If set during scheduled scan start then the new scan req will be
- *	owned by the netlink socket that created it and the scheduled scan will
- *	be stopped when the socket is closed.
- *
->>>>>>> a-3.10
  * @NL80211_ATTR_MAX: highest attribute number currently defined
  * @__NL80211_ATTR_AFTER_LAST: internal use
  */
@@ -1894,11 +1874,6 @@ enum nl80211_attrs {
 
 	NL80211_ATTR_TDLS_PEER_CAPABILITY,
 
-<<<<<<< HEAD
-=======
-	NL80211_ATTR_IFACE_SOCKET_OWNER,
-
->>>>>>> a-3.10
 	/* add attributes here, update the policy in nl80211.c */
 
 	__NL80211_ATTR_AFTER_LAST,
@@ -3997,7 +3972,6 @@ struct nl80211_vendor_cmd_info {
 	__u32 subcmd;
 };
 
-<<<<<<< HEAD
 /**
  * enum nl80211_tdls_peer_capability - TDLS peer flags.
  *
@@ -4014,6 +3988,4 @@ enum nl80211_tdls_peer_capability {
 	NL80211_TDLS_PEER_WMM = 1<<2,
 };
 
-=======
->>>>>>> a-3.10
 #endif /* __LINUX_NL80211_H */

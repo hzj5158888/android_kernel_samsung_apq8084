@@ -316,7 +316,6 @@ int pstore_mkfile(enum pstore_type_id type, char *psname, u64 id, int count,
 
 	switch (type) {
 	case PSTORE_TYPE_DMESG:
-<<<<<<< HEAD
 		snprintf(name, PSTORE_NAMELEN, "dmesg-%s-%lld", psname, id);
 		break;
 	case PSTORE_TYPE_CONSOLE:
@@ -337,29 +336,6 @@ int pstore_mkfile(enum pstore_type_id type, char *psname, u64 id, int count,
 	default:
 		snprintf(name, PSTORE_NAMELEN, "type%d-%s-%lld",
 			type, psname, id);
-=======
-		scnprintf(name, sizeof(name), "dmesg-%s-%lld",
-			  psname, id);
-		break;
-	case PSTORE_TYPE_CONSOLE:
-		scnprintf(name, sizeof(name), "console-%s", psname);
-		break;
-	case PSTORE_TYPE_FTRACE:
-		scnprintf(name, sizeof(name), "ftrace-%s", psname);
-		break;
-	case PSTORE_TYPE_MCE:
-		scnprintf(name, sizeof(name), "mce-%s-%lld", psname, id);
-		break;
-	case PSTORE_TYPE_PMSG:
-		scnprintf(name, sizeof(name), "pmsg-%s-%lld", psname, id);
-		break;
-	case PSTORE_TYPE_UNKNOWN:
-		scnprintf(name, sizeof(name), "unknown-%s-%lld", psname, id);
-		break;
-	default:
-		scnprintf(name, sizeof(name), "type%d-%s-%lld",
-			  type, psname, id);
->>>>>>> a-3.10
 		break;
 	}
 

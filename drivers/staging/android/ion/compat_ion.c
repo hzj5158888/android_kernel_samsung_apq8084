@@ -25,11 +25,7 @@
 struct compat_ion_allocation_data {
 	compat_size_t len;
 	compat_size_t align;
-<<<<<<< HEAD
 	compat_uint_t heap_mask;
-=======
-	compat_uint_t heap_id_mask;
->>>>>>> a-3.10
 	compat_uint_t flags;
 	compat_int_t handle;
 };
@@ -63,13 +59,8 @@ static int compat_get_ion_allocation_data(
 	err |= put_user(s, &data->len);
 	err |= get_user(s, &data32->align);
 	err |= put_user(s, &data->align);
-<<<<<<< HEAD
 	err |= get_user(u, &data32->heap_mask);
 	err |= put_user(u, &data->heap_mask);
-=======
-	err |= get_user(u, &data32->heap_id_mask);
-	err |= put_user(u, &data->heap_id_mask);
->>>>>>> a-3.10
 	err |= get_user(u, &data32->flags);
 	err |= put_user(u, &data->flags);
 	err |= get_user(i, &data32->handle);
@@ -104,13 +95,8 @@ static int compat_put_ion_allocation_data(
 	err |= put_user(s, &data32->len);
 	err |= get_user(s, &data->align);
 	err |= put_user(s, &data32->align);
-<<<<<<< HEAD
 	err |= get_user(u, &data->heap_mask);
 	err |= put_user(u, &data32->heap_mask);
-=======
-	err |= get_user(u, &data->heap_id_mask);
-	err |= put_user(u, &data32->heap_id_mask);
->>>>>>> a-3.10
 	err |= get_user(u, &data->flags);
 	err |= put_user(u, &data32->flags);
 	err |= get_user(i, &data->handle);

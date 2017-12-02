@@ -196,7 +196,6 @@ void __init sem_init (void)
 				IPC_SEM_IDS, sysvipc_sem_proc_show);
 }
 
-<<<<<<< HEAD
 /**
  * unmerge_queues - unmerge queues, if possible.
  * @sma: semaphore array
@@ -244,8 +243,6 @@ static void merge_queues(struct sem_array *sma)
 	}
 }
 
-=======
->>>>>>> a-3.10
 static void sem_rcu_free(struct rcu_head *head)
 {
 	struct ipc_rcu *p = container_of(head, struct ipc_rcu, rcu);
@@ -255,7 +252,6 @@ static void sem_rcu_free(struct rcu_head *head)
 	ipc_rcu_free(head);
 }
 
-<<<<<<< HEAD
 /*
  * spin_unlock_wait() and !spin_is_locked() are not memory barriers, they
  * are only control barriers.
@@ -284,8 +280,6 @@ static void sem_wait_array(struct sem_array *sma)
 	ipc_smp_acquire__after_spin_is_unlocked();
 }
 
-=======
->>>>>>> a-3.10
 /*
  * If the request contains only one semaphore operation, and there are
  * no complex transactions pending, lock only the semaphore involved.

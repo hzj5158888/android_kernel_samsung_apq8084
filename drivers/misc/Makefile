@@ -56,7 +56,6 @@ obj-$(CONFIG_INTEL_MEI)		+= mei/
 obj-$(CONFIG_VMWARE_VMCI)	+= vmw_vmci/
 obj-$(CONFIG_LATTICE_ECP3_CONFIG)	+= lattice-ecp3-config.o
 obj-$(CONFIG_SRAM)		+= sram.o
-<<<<<<< HEAD
 obj-$(CONFIG_TSIF) += msm_tsif.o
 obj-$(CONFIG_HAPTIC_ISA1200)		+= isa1200.o
 obj-$(CONFIG_SAMSUNG_JACK)	+= sec_jack.o
@@ -78,6 +77,3 @@ obj-$(CONFIG_DM_VERITY)		+= dmverity_query.o
 obj-$(CONFIG_SEC_MODEM) += modem_if/
 
 obj-y += dualwave/
-=======
-obj-$(CONFIG_UID_SYS_STATS) += uid_sys_stats.o
->>>>>>> a-3.10

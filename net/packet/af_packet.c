@@ -1382,18 +1382,10 @@ static struct packet_fanout *fanout_release(struct sock *sk)
 	if (f) {
 		po->fanout = NULL;
 
-<<<<<<< HEAD
 		if (atomic_dec_and_test(&f->sk_ref))
 			list_del(&f->list);
 		else
 			f = NULL;
-=======
-		if (atomic_dec_and_test(&f->sk_ref)) {
-			list_del(&f->list);
-			dev_remove_pack(&f->prot_hook);
-			kfree(f);
-		}
->>>>>>> a-3.10
 	}
 	mutex_unlock(&fanout_mutex);
 
@@ -3195,7 +3187,6 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
 			return -EFAULT;
 		if (val > INT_MAX)
 			return -EINVAL;
-<<<<<<< HEAD
 		lock_sock(sk);
 		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
 			ret = -EBUSY;
@@ -3205,10 +3196,6 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
 		}
 		release_sock(sk);
 		return ret;
-=======
-		po->tp_reserve = val;
-		return 0;
->>>>>>> a-3.10
 	}
 	case PACKET_LOSS:
 	{

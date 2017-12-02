@@ -158,7 +158,6 @@ obj-$(CONFIG_IIO)		+= iio/
 obj-$(CONFIG_VME_BUS)		+= vme/
 obj-$(CONFIG_IPACK_BUS)		+= ipack/
 obj-$(CONFIG_NTB)		+= ntb/
-<<<<<<< HEAD
 
 obj-$(CONFIG_CORESIGHT)		+= coresight/
 obj-$(CONFIG_ESOC)		+= esoc/
@@ -175,6 +174,3 @@ obj-$(CONFIG_BATTERY_SAMSUNG)	+= battery/
 obj-$(CONFIG_SENSORS_FINGERPRINT)	+= fingerprint/
 
 obj-$(CONFIG_IRLED_GPIO)	+= irled/
-=======
-obj-$(CONFIG_ANDROID)		+= android/
->>>>>>> a-3.10

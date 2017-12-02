@@ -16,20 +16,7 @@
 #include <linux/kobject.h>
 #include <linux/notifier.h>
 #include <linux/sysfs.h>
-<<<<<<< HEAD
 #include <asm/cputime.h>
-=======
-#include <linux/completion.h>
-#include <linux/workqueue.h>
-#include <linux/cpumask.h>
-#include <asm/div64.h>
-#include <asm/cputime.h>
-
-#define CPUFREQ_NAME_LEN 16
-/* Print length for names. Extra 1 space for accomodating '\n' in prints */
-#define CPUFREQ_NAME_PLEN (CPUFREQ_NAME_LEN + 1)
-
->>>>>>> a-3.10
 
 /*********************************************************************
  *                        CPUFREQ INTERFACE                          *
@@ -362,18 +349,8 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
 int cpufreq_register_notifier(struct notifier_block *nb, unsigned int list);
 int cpufreq_unregister_notifier(struct notifier_block *nb, unsigned int list);
 
-<<<<<<< HEAD
 void cpufreq_notify_transition(struct cpufreq_policy *policy,
 		struct cpufreq_freqs *freqs, unsigned int state);
-=======
-/*********************************************************************
- *                        CPUFREQ 2.6. INTERFACE                     *
- *********************************************************************/
-int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu);
-int cpufreq_update_policy(unsigned int cpu);
-bool have_governor_per_policy(void);
-struct kobject *get_governor_parent_kobj(struct cpufreq_policy *policy);
->>>>>>> a-3.10
 
 #else /* CONFIG_CPU_FREQ */
 static inline int cpufreq_register_notifier(struct notifier_block *nb,
@@ -523,7 +500,6 @@ extern struct freq_attr *cpufreq_generic_attr[];
 void cpufreq_frequency_table_get_attr(struct cpufreq_frequency_table *table,
 				      unsigned int cpu);
 void cpufreq_frequency_table_put_attr(unsigned int cpu);
-<<<<<<< HEAD
 int cpufreq_table_validate_and_show(struct cpufreq_policy *policy,
 				      struct cpufreq_frequency_table *table);
 
@@ -535,8 +511,6 @@ static inline int cpufreq_generic_exit(struct cpufreq_policy *policy)
 	cpufreq_frequency_table_put_attr(policy->cpu);
 	return 0;
 }
-=======
->>>>>>> a-3.10
 
 /*********************************************************************
  *                         CPUFREQ STATS                             *

@@ -30,11 +30,6 @@
 #include <linux/sched.h>
 #include <linux/shrinker.h>
 #include <linux/types.h>
-#ifdef CONFIG_ION_POOL_CACHE_POLICY
-#include <asm/cacheflush.h>
-#endif
-
-#include "ion.h"
 
 #include "ion.h"
 
@@ -111,10 +106,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer);
  * @map_kernel		map memory to the kernel
  * @unmap_kernel	unmap memory to the kernel
  * @map_user		map memory to userspace
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
  * @unmap_user		unmap memory to userspace
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
  *
  * allocate, phys, and map_user return 0 on success, -errno on error.
  * map_dma and map_kernel return pointer on success, ERR_PTR on
@@ -137,14 +129,10 @@ struct ion_heap_ops {
 	void (*unmap_kernel) (struct ion_heap *heap, struct ion_buffer *buffer);
 	int (*map_user) (struct ion_heap *mapper, struct ion_buffer *buffer,
 			 struct vm_area_struct *vma);
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
 	void (*unmap_user) (struct ion_heap *mapper, struct ion_buffer *buffer);
 	int (*shrink)(struct ion_heap *heap, gfp_t gfp_mask, int nr_to_scan);
 	int (*print_debug)(struct ion_heap *heap, struct seq_file *s,
 			   const struct list_head *mem_map);
-=======
-	int (*shrink)(struct ion_heap *heap, gfp_t gfp_mask, int nr_to_scan);
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
 };
 
 /**
@@ -163,10 +151,7 @@ struct ion_heap_ops {
  */
 #define ION_PRIV_FLAG_SHRINKER_FREE (1 << 0)
 
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
 
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
 /**
  * struct ion_heap - represents a heap in the system
  * @node:		rb node to put the heap on the device's tree of heaps
@@ -179,10 +164,7 @@ struct ion_heap_ops {
  *			MUST be unique
  * @name:		used for debugging
  * @shrinker:		a shrinker for the heap
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
  * @priv:		private heap data
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
  * @free_list:		free list head if deferred free is used
  * @free_list_size	size of the deferred free list in bytes
  * @lock:		protects the free list
@@ -211,7 +193,6 @@ struct ion_heap {
 	spinlock_t free_lock;
 	wait_queue_head_t waitqueue;
 	struct task_struct *task;
-
 	int (*debug_show)(struct ion_heap *heap, struct seq_file *, void *);
 	atomic_t total_allocated;
 	atomic_t total_handles;
@@ -279,17 +260,6 @@ void ion_heap_unmap_kernel(struct ion_heap *, struct ion_buffer *);
 int ion_heap_map_user(struct ion_heap *, struct ion_buffer *,
 			struct vm_area_struct *);
 int ion_heap_buffer_zero(struct ion_buffer *buffer);
-int ion_heap_pages_zero(struct page *page, size_t size, pgprot_t pgprot);
-
-/**
- * ion_heap_init_shrinker
- * @heap:		the heap
- *
- * If a heap sets the ION_HEAP_FLAG_DEFER_FREE flag or defines the shrink op
- * this function will be called to setup a shrinker to shrink the freelists
- * and call the heap's shrink op.
- */
-void ion_heap_init_shrinker(struct ion_heap *heap);
 
 int msm_ion_heap_high_order_page_zero(struct page *page, int order);
 int msm_ion_heap_buffer_zero(struct ion_buffer *buffer);
@@ -339,11 +309,7 @@ void ion_heap_freelist_add(struct ion_heap *heap, struct ion_buffer *buffer);
 size_t ion_heap_freelist_drain(struct ion_heap *heap, size_t size);
 
 /**
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
  * ion_heap_freelist_drain_from_shrinker - drain the deferred free
-=======
- * ion_heap_freelist_shrink - drain the deferred free
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
  *				list, skipping any heap-specific
  *				pooling or caching mechanisms
  *
@@ -359,17 +325,10 @@ size_t ion_heap_freelist_drain(struct ion_heap *heap, size_t size);
  * page pools or otherwise cache the pages. Everything must be
  * genuinely free'd back to the system. If you're free'ing from a
  * shrinker you probably want to use this. Note that this relies on
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
  * the heap.ops.free callback honoring the
  * ION_PRIV_FLAG_SHRINKER_FREE flag.
  */
 size_t ion_heap_freelist_drain_from_shrinker(struct ion_heap *heap,
-=======
- * the heap.ops.free callback honoring the ION_PRIV_FLAG_SHRINKER_FREE
- * flag.
- */
-size_t ion_heap_freelist_shrink(struct ion_heap *heap,
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
 					size_t size);
 
 /**
@@ -454,37 +413,6 @@ struct ion_page_pool *ion_page_pool_create(gfp_t gfp_mask, unsigned int order);
 void ion_page_pool_destroy(struct ion_page_pool *);
 void *ion_page_pool_alloc(struct ion_page_pool *, bool *from_pool);
 void ion_page_pool_free(struct ion_page_pool *, struct page *);
-void ion_page_pool_free_immediate(struct ion_page_pool *, struct page *);
-
-#ifdef CONFIG_ION_POOL_CACHE_POLICY
-static inline void ion_page_pool_alloc_set_cache_policy
-				(struct ion_page_pool *pool,
-				struct page *page){
-	void *va = page_address(page);
-
-	if (va)
-		set_memory_wc((unsigned long)va, 1 << pool->order);
-}
-
-static inline void ion_page_pool_free_set_cache_policy
-				(struct ion_page_pool *pool,
-				struct page *page){
-	void *va = page_address(page);
-
-	if (va)
-		set_memory_wb((unsigned long)va, 1 << pool->order);
-
-}
-#else
-static inline void ion_page_pool_alloc_set_cache_policy
-				(struct ion_page_pool *pool,
-				struct page *page){ }
-
-static inline void ion_page_pool_free_set_cache_policy
-				(struct ion_page_pool *pool,
-				struct page *page){ }
-#endif
-
 
 /** ion_page_pool_shrink - shrinks the size of the memory cached in the pool
  * @pool:		the pool
@@ -507,7 +435,6 @@ int ion_page_pool_shrink(struct ion_page_pool *pool, gfp_t gfp_mask,
 void ion_pages_sync_for_device(struct device *dev, struct page *page,
 		size_t size, enum dma_data_direction dir);
 
-<<<<<<< HEAD:drivers/staging/android/ion/ion_priv.h
 int ion_walk_heaps(struct ion_client *client, int heap_id, void *data,
 			int (*f)(struct ion_heap *heap, void *data));
 
@@ -516,6 +443,4 @@ struct ion_handle *ion_handle_get_by_id(struct ion_client *client,
 
 int ion_handle_put(struct ion_handle *handle);
 
-=======
->>>>>>> a-3.10:drivers/staging/android/ion/ion_priv.h
 #endif /* _ION_PRIV_H */

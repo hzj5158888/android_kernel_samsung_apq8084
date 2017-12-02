@@ -60,18 +60,15 @@
 unsigned int processor_id;
 EXPORT_SYMBOL(processor_id);
 
-unsigned long elf_hwcap __read_mostly;
+unsigned int elf_hwcap __read_mostly;
 EXPORT_SYMBOL_GPL(elf_hwcap);
 
-<<<<<<< HEAD
 unsigned int boot_reason;
 EXPORT_SYMBOL(boot_reason);
 
 unsigned int cold_boot;
 EXPORT_SYMBOL(cold_boot);
 
-=======
->>>>>>> a-3.10
 #ifdef CONFIG_COMPAT
 #define COMPAT_ELF_HWCAP_DEFAULT	\
 				(COMPAT_HWCAP_HALF|COMPAT_HWCAP_THUMB|\
@@ -80,10 +77,6 @@ EXPORT_SYMBOL(cold_boot);
 				 COMPAT_HWCAP_VFPv3|COMPAT_HWCAP_VFPv4|\
 				 COMPAT_HWCAP_NEON|COMPAT_HWCAP_IDIV)
 unsigned int compat_elf_hwcap __read_mostly = COMPAT_ELF_HWCAP_DEFAULT;
-<<<<<<< HEAD
-=======
-unsigned int compat_elf_hwcap2 __read_mostly;
->>>>>>> a-3.10
 #endif
 
 static const char *cpu_name;
@@ -213,7 +206,6 @@ static void __init smp_build_mpidr_hash(void)
 static void __init setup_processor(void)
 {
 	struct cpu_info *cpu_info;
-	u64 features, block;
 
 	/*
 	 * locate processor in the list of supported processor
@@ -234,69 +226,6 @@ static void __init setup_processor(void)
 
 	sprintf(init_utsname()->machine, "aarch64");
 	elf_hwcap = 0;
-
-	/*
-	 * ID_AA64ISAR0_EL1 contains 4-bit wide signed feature blocks.
-	 * The blocks we test below represent incremental functionality
-	 * for non-negative values. Negative values are reserved.
-	 */
-	features = read_cpuid(ID_AA64ISAR0_EL1);
-	block = (features >> 4) & 0xf;
-	if (!(block & 0x8)) {
-		switch (block) {
-		default:
-		case 2:
-			elf_hwcap |= HWCAP_PMULL;
-		case 1:
-			elf_hwcap |= HWCAP_AES;
-		case 0:
-			break;
-		}
-	}
-
-	block = (features >> 8) & 0xf;
-	if (block && !(block & 0x8))
-		elf_hwcap |= HWCAP_SHA1;
-
-	block = (features >> 12) & 0xf;
-	if (block && !(block & 0x8))
-		elf_hwcap |= HWCAP_SHA2;
-
-	block = (features >> 16) & 0xf;
-	if (block && !(block & 0x8))
-		elf_hwcap |= HWCAP_CRC32;
-
-#ifdef CONFIG_COMPAT
-	/*
-	 * ID_ISAR5_EL1 carries similar information as above, but pertaining to
-	 * the Aarch32 32-bit execution state.
-	 */
-	features = read_cpuid(ID_ISAR5_EL1);
-	block = (features >> 4) & 0xf;
-	if (!(block & 0x8)) {
-		switch (block) {
-		default:
-		case 2:
-			compat_elf_hwcap2 |= COMPAT_HWCAP2_PMULL;
-		case 1:
-			compat_elf_hwcap2 |= COMPAT_HWCAP2_AES;
-		case 0:
-			break;
-		}
-	}
-
-	block = (features >> 8) & 0xf;
-	if (block && !(block & 0x8))
-		compat_elf_hwcap2 |= COMPAT_HWCAP2_SHA1;
-
-	block = (features >> 12) & 0xf;
-	if (block && !(block & 0x8))
-		compat_elf_hwcap2 |= COMPAT_HWCAP2_SHA2;
-
-	block = (features >> 16) & 0xf;
-	if (block && !(block & 0x8))
-		compat_elf_hwcap2 |= COMPAT_HWCAP2_CRC32;
-#endif
 }
 
 static void __init setup_machine_fdt(phys_addr_t dt_phys)
@@ -489,7 +418,6 @@ static const char *hwcap_str[] = {
 	"fp",
 	"asimd",
 	"evtstrm",
-<<<<<<< HEAD
 	NULL
 };
 
@@ -517,13 +445,6 @@ static const char *compat_hwcap_str[] = {
 	"vfpd32",
 	"lpae",
 	"evtstrm",
-=======
-	"aes",
-	"pmull",
-	"sha1",
-	"sha2",
-	"crc32",
->>>>>>> a-3.10
 	NULL
 };
 #endif /* CONFIG_COMPAT */
@@ -547,36 +468,6 @@ static int c_show(struct seq_file *m, void *v)
 		seq_printf(m, "BogoMIPS\t: %lu.%02lu\n",
 			   loops_per_jiffy / (500000UL/HZ),
 			   loops_per_jiffy / (5000UL/HZ) % 100);
-<<<<<<< HEAD
-=======
-	}
-
-	/* dump out the processor features */
-	seq_puts(m, "Features\t: ");
-
-	for (i = 0; hwcap_str[i]; i++)
-		if (elf_hwcap & (1 << i))
-			seq_printf(m, "%s ", hwcap_str[i]);
-#ifdef CONFIG_ARMV7_COMPAT_CPUINFO
-	if (is_compat_task()) {
-		/* Print out the non-optional ARMv8 HW capabilities */
-		seq_printf(m, "wp half thumb fastmult vfp edsp neon vfpv3 tlsi ");
-		seq_printf(m, "vfpv4 idiva idivt ");
-	}
-#endif
-
-	seq_printf(m, "\nCPU implementer\t: 0x%02x\n", read_cpuid_id() >> 24);
-	seq_printf(m, "CPU architecture: %s\n",
-#if IS_ENABLED(CONFIG_ARMV7_COMPAT_CPUINFO)
-			is_compat_task() ? "8" :
-#endif
-			"AArch64");
-	seq_printf(m, "CPU variant\t: 0x%x\n", (read_cpuid_id() >> 20) & 15);
-	seq_printf(m, "CPU part\t: 0x%03x\n", (read_cpuid_id() >> 4) & 0xfff);
-	seq_printf(m, "CPU revision\t: %d\n", read_cpuid_id() & 15);
-
-	seq_puts(m, "\n");
->>>>>>> a-3.10
 
 		/*
 		 * Dump out the common processor features in a single line.

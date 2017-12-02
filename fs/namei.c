@@ -454,7 +454,6 @@ int inode_permission2(struct vfsmount *mnt, struct inode *inode, int mask)
 	if (retval)
 		return retval;
 	return __inode_permission2(mnt, inode, mask);
-<<<<<<< HEAD
 }
 EXPORT_SYMBOL(inode_permission2);
 
@@ -462,15 +461,6 @@ int inode_permission(struct inode *inode, int mask)
 {
 	return inode_permission2(NULL, inode, mask);
 }
-=======
-}
-EXPORT_SYMBOL(inode_permission2);
-
-int inode_permission(struct inode *inode, int mask)
-{
-	return inode_permission2(NULL, inode, mask);
-}
->>>>>>> a-3.10
 EXPORT_SYMBOL(inode_permission);
 
 /**

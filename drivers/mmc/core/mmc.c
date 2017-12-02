@@ -1616,9 +1616,11 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
 	}
 
 	/*
-	 * Enable power_off_notification byte in the ext_csd register
+	 * If the host supports the power_off_notify capability then
+	 * set the notification byte in the ext_csd register of device
 	 */
-	if (card->ext_csd.rev >= 6) {
+	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
+	    (card->ext_csd.rev >= 6)) {
 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
 				 EXT_CSD_POWER_OFF_NOTIFICATION,
 				 EXT_CSD_POWER_ON,
@@ -1873,11 +1875,12 @@ static void mmc_detect(struct mmc_host *host)
 	}
 }
 
-static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
+/*
+ * Suspend callback from host.
+ */
+static int mmc_suspend(struct mmc_host *host)
 {
 	int err = 0;
-	unsigned int notify_type = is_suspend ? EXT_CSD_POWER_OFF_SHORT :
-					EXT_CSD_POWER_OFF_LONG;
 
 	BUG_ON(!host);
 	BUG_ON(!host->card);
@@ -1892,18 +1895,11 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
 	if (mmc_can_scale_clk(host))
 		mmc_disable_clk_scaling(host);
 
-	err = mmc_flush_cache(host->card);
+	err = mmc_cache_ctrl(host, 0);
 	if (err)
 		goto out;
 
-<<<<<<< HEAD
 	if (mmc_card_can_sleep(host))
-=======
-	if (mmc_can_poweroff_notify(host->card) &&
-		((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE) || !is_suspend))
-		err = mmc_poweroff_notify(host->card, notify_type);
-	else if (mmc_card_can_sleep(host))
->>>>>>> a-3.10
 		err = mmc_card_sleep(host);
 	else if (!mmc_host_is_spi(host))
 		err = mmc_deselect_cards(host);
@@ -1912,22 +1908,6 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
 out:
 	mmc_release_host(host);
 	return err;
-}
-
-/*
- * Suspend callback from host.
- */
-static int mmc_suspend(struct mmc_host *host)
-{
-	return _mmc_suspend(host, true);
-}
-
-/*
- * Shutdown callback
- */
-static int mmc_shutdown(struct mmc_host *host)
-{
-	return _mmc_suspend(host, false);
 }
 
 /*
@@ -2014,11 +1994,7 @@ static const struct mmc_bus_ops mmc_ops = {
 	.resume = NULL,
 	.power_restore = mmc_power_restore,
 	.alive = mmc_alive,
-<<<<<<< HEAD
 	.change_bus_speed = mmc_change_bus_speed,
-=======
-	.shutdown = mmc_shutdown,
->>>>>>> a-3.10
 };
 
 static const struct mmc_bus_ops mmc_ops_unsafe = {
@@ -2030,11 +2006,7 @@ static const struct mmc_bus_ops mmc_ops_unsafe = {
 	.resume = mmc_resume,
 	.power_restore = mmc_power_restore,
 	.alive = mmc_alive,
-<<<<<<< HEAD
 	.change_bus_speed = mmc_change_bus_speed,
-=======
-	.shutdown = mmc_shutdown,
->>>>>>> a-3.10
 };
 
 static void mmc_attach_bus_ops(struct mmc_host *host)

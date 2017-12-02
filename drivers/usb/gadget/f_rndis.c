@@ -66,11 +66,7 @@
  *   - MS-Windows drivers sometimes emit undocumented requests.
  */
 
-<<<<<<< HEAD
 static unsigned int rndis_dl_max_pkt_per_xfer = 5;
-=======
-static unsigned int rndis_dl_max_pkt_per_xfer = 3;
->>>>>>> a-3.10
 module_param(rndis_dl_max_pkt_per_xfer, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rndis_dl_max_pkt_per_xfer,
 	"Maximum packets per transfer for DL aggregation");
@@ -78,15 +74,11 @@ MODULE_PARM_DESC(rndis_dl_max_pkt_per_xfer,
 static unsigned int rndis_ul_max_pkt_per_xfer = 3;
 module_param(rndis_ul_max_pkt_per_xfer, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rndis_ul_max_pkt_per_xfer,
-<<<<<<< HEAD
 	"Maximum packets per transfer for UL aggregation");
 
 static unsigned int rx_trigger_enabled;
 module_param(rx_trigger_enabled, uint, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(rx_trigger_enabled, "rx trigger_enable");
-=======
-       "Maximum packets per transfer for UL aggregation");
->>>>>>> a-3.10
 
 struct f_rndis {
 	struct gether			port;
@@ -564,14 +556,11 @@ static void rndis_command_complete(struct usb_ep *ep, struct usb_request *req)
 	struct usb_composite_dev	*cdev;
 	int				status;
 	rndis_init_msg_type		*buf;
-<<<<<<< HEAD
 
 	if (!rndis->port.func.config || !rndis->port.func.config->cdev)
 		return;
 	else
 		cdev = rndis->port.func.config->cdev;
-=======
->>>>>>> a-3.10
 
 	/* received RNDIS command from USB_CDC_SEND_ENCAPSULATED_COMMAND */
 //	spin_lock(&dev->lock);
@@ -583,7 +572,6 @@ static void rndis_command_complete(struct usb_ep *ep, struct usb_request *req)
 	buf = (rndis_init_msg_type *)req->buf;
 
 	if (buf->MessageType == RNDIS_MSG_INIT) {
-<<<<<<< HEAD
 		if (cdev->gadget->sg_supported) {
 			rndis->port.dl_max_xfer_size = buf->MaxTransferSize;
 			gether_update_dl_max_xfer_size(&rndis->port,
@@ -601,17 +589,11 @@ static void rndis_command_complete(struct usb_ep *ep, struct usb_request *req)
 			return;
 		}
 
-=======
->>>>>>> a-3.10
 		if (buf->MaxTransferSize > 2048)
 			rndis->port.multi_pkt_xfer = 1;
 		else
 			rndis->port.multi_pkt_xfer = 0;
-<<<<<<< HEAD
 		DBG(cdev, "%s: MaxTransferSize: %d : Multi_pkt_txr: %s\n",
-=======
-		pr_info("%s: MaxTransferSize: %d : Multi_pkt_txr: %s\n",
->>>>>>> a-3.10
 				__func__, buf->MaxTransferSize,
 				rndis->port.multi_pkt_xfer ? "enabled" :
 							    "disabled");
@@ -1024,10 +1006,7 @@ rndis_bind_config_vendor(struct usb_configuration *c, u8 ethaddr[ETH_ALEN],
 	rndis->port.unwrap = rndis_rm_hdr;
 	rndis->port.ul_max_pkts_per_xfer = rndis_ul_max_pkt_per_xfer;
 	rndis->port.dl_max_pkts_per_xfer = rndis_dl_max_pkt_per_xfer;
-<<<<<<< HEAD
 	rndis->port.rx_trigger_enabled = rx_trigger_enabled;
-=======
->>>>>>> a-3.10
 
 	rndis->port.func.name = "rndis";
 	rndis->port.func.strings = rndis_strings;

@@ -198,12 +198,8 @@ struct inet6_dev {
 	struct ipv6_devconf	cnf;
 	struct ipv6_devstat	stats;
 
-<<<<<<< HEAD
 	struct timer_list	rs_timer;
 	__u8			rs_probes;
-=======
-	__s32			rs_interval;	/* in jiffies */
->>>>>>> a-3.10
 
 	unsigned long		tstamp; /* ipv6InterfaceTable update timestamp */
 	struct rcu_head		rcu;

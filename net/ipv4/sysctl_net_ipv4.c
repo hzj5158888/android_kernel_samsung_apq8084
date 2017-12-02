@@ -780,7 +780,6 @@ static struct ctl_table ipv4_table[] = {
 		.extra2		= &four,
 	},
 	{
-<<<<<<< HEAD
 		.procname	= "tcp_min_tso_segs",
 		.data		= &sysctl_tcp_min_tso_segs,
 		.maxlen		= sizeof(int),
@@ -790,8 +789,6 @@ static struct ctl_table ipv4_table[] = {
 		.extra2		= &gso_max_segs,
 	},
 	{
-=======
->>>>>>> a-3.10
 		.procname       = "tcp_default_init_rwnd",
 		.data           = &sysctl_tcp_default_init_rwnd,
 		.maxlen         = sizeof(int),

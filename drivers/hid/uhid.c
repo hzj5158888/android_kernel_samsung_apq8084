@@ -29,8 +29,6 @@
 #define UHID_NAME	"uhid"
 #define UHID_BUFSIZE	32
 
-static DEFINE_MUTEX(uhid_open_mutex);
-
 struct uhid_device {
 	struct mutex devlock;
 	bool running;
@@ -110,23 +108,14 @@ static void uhid_hid_stop(struct hid_device *hid)
 static int uhid_hid_open(struct hid_device *hid)
 {
 	struct uhid_device *uhid = hid->driver_data;
-	int retval = 0;
 
-	mutex_lock(&uhid_open_mutex);
-	if (!hid->open++) {
-		retval = uhid_queue_event(uhid, UHID_OPEN);
-		if (retval)
-			hid->open--;
-	}
-	mutex_unlock(&uhid_open_mutex);
-	return retval;
+	return uhid_queue_event(uhid, UHID_OPEN);
 }
 
 static void uhid_hid_close(struct hid_device *hid)
 {
 	struct uhid_device *uhid = hid->driver_data;
 
-<<<<<<< HEAD
 	uhid_queue_event(uhid, UHID_CLOSE);
 }
 
@@ -182,12 +171,6 @@ static int uhid_hid_input(struct input_dev *input, unsigned int type,
 	spin_unlock_irqrestore(&uhid->qlock, flags);
 
 	return 0;
-=======
-	mutex_lock(&uhid_open_mutex);
-	if (!--hid->open)
-		uhid_queue_event(uhid, UHID_CLOSE);
-	mutex_unlock(&uhid_open_mutex);
->>>>>>> a-3.10
 }
 
 static int uhid_hid_parse(struct hid_device *hid)
@@ -323,6 +306,7 @@ static struct hid_ll_driver uhid_hid_driver = {
 	.stop = uhid_hid_stop,
 	.open = uhid_hid_open,
 	.close = uhid_hid_close,
+	.hidinput_input_event = uhid_hid_input,
 	.parse = uhid_hid_parse,
 };
 
