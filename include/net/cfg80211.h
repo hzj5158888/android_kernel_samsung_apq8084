@@ -1330,6 +1330,11 @@ struct cfg80211_match_set {
  * @channels: channels to scan
  * @min_rssi_thold: for drivers only supporting a single threshold, this
  *	contains the minimum over all matchsets
+<<<<<<< HEAD
+=======
+ * @owner_nlportid: netlink portid of owner (if this should is a request
+ *	owned by a particular socket)
+>>>>>>> a-3.10
  */
 struct cfg80211_sched_scan_request {
 	struct cfg80211_ssid *ssids;
@@ -1348,6 +1353,7 @@ struct cfg80211_sched_scan_request {
 	struct wiphy *wiphy;
 	struct net_device *dev;
 	unsigned long scan_start;
+	u32 owner_nlportid;
 
 	/* keep last */
 	struct ieee80211_channel *channels[0];
@@ -2722,11 +2728,14 @@ struct wiphy_vendor_command {
  * @n_vendor_commands: number of vendor commands
  * @vendor_events: array of vendor events supported by the hardware
  * @n_vendor_events: number of vendor events
+<<<<<<< HEAD
  *
  * @max_ap_assoc_sta: maximum number of associated stations supported in AP mode
  *	(including P2P GO) or 0 to indicate no such limit is advertised. The
  *	driver is allowed to advertise a theoretical limit that it can reach in
  *	some cases, but may not always reach.
+=======
+>>>>>>> a-3.10
  */
 struct wiphy {
 	/* assign these fields before you register the wiphy */
@@ -2841,8 +2850,11 @@ struct wiphy {
 	const struct nl80211_vendor_cmd_info *vendor_events;
 	int n_vendor_commands, n_vendor_events;
 
+<<<<<<< HEAD
 	u16 max_ap_assoc_sta;
 
+=======
+>>>>>>> a-3.10
 	char priv[0] __aligned(NETDEV_ALIGN);
 };
 
@@ -3004,6 +3016,7 @@ struct cfg80211_cached_keys;
  * @p2p_started: true if this is a P2P Device that has been started
  * @cac_started: true if DFS channel availability check has been started
  * @cac_start_time: timestamp (jiffies) when the dfs state was entered.
+ * @owner_nlportid: (private) owner socket port ID
  */
 struct wireless_dev {
 	struct wiphy *wiphy;
@@ -3057,6 +3070,8 @@ struct wireless_dev {
 
 	bool cac_started;
 	unsigned long cac_start_time;
+
+	u32 owner_nlportid;
 
 #ifdef CONFIG_CFG80211_WEXT
 	/* wext data */

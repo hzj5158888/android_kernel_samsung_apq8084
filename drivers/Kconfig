@@ -176,6 +176,7 @@ source "drivers/ipack/Kconfig"
 
 source "drivers/reset/Kconfig"
 
+<<<<<<< HEAD
 source "drivers/coresight/Kconfig"
 
 source "drivers/bif/Kconfig"
@@ -193,4 +194,8 @@ source "drivers/fingerprint/Kconfig"
 source "drivers/sensorhub/Kconfig"
 
 source "drivers/irled/Kconfig"
+=======
+source "drivers/android/Kconfig"
+
+>>>>>>> a-3.10
 endmenu

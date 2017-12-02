@@ -2,6 +2,10 @@
  * zsmalloc memory allocator
  *
  * Copyright (C) 2011  Nitin Gupta
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2012, 2013 Minchan Kim
+>>>>>>> a-3.10
  *
  * This code is released using a dual license strategy: BSD/GPL
  * You can choose the license that better fits your requirements.
@@ -900,7 +904,11 @@ static void free_zspage(struct page *first_page)
 		__free_page(nextp);
 	}
 	reset_page(head_extra);
+<<<<<<< HEAD
 	__free_page(nextp);
+=======
+	__free_page(head_extra);
+>>>>>>> a-3.10
 }
 
 /* Initialize a newly allocated zspage */

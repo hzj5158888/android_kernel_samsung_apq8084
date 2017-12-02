@@ -384,11 +384,15 @@ static const struct nla_policy nl80211_policy[NL80211_ATTR_MAX+1] = {
 	[NL80211_ATTR_VENDOR_ID] = { .type = NLA_U32 },
 	[NL80211_ATTR_VENDOR_SUBCMD] = { .type = NLA_U32 },
 	[NL80211_ATTR_VENDOR_DATA] = { .type = NLA_BINARY },
+<<<<<<< HEAD
 	[NL80211_ATTR_QOS_MAP] = { .type = NLA_BINARY,
 				   .len = IEEE80211_QOS_MAP_LEN_MAX },
 	[NL80211_ATTR_MAC_HINT] = { .len = ETH_ALEN },
 	[NL80211_ATTR_WIPHY_FREQ_HINT] = { .type = NLA_U32 },
 	[NL80211_ATTR_TDLS_PEER_CAPABILITY] = { .type = NLA_U32 },
+=======
+	[NL80211_ATTR_IFACE_SOCKET_OWNER] = { .type = NLA_FLAG },
+>>>>>>> a-3.10
 };
 
 /* policy for the key attributes */
@@ -1541,11 +1545,14 @@ static int nl80211_send_wiphy(struct cfg80211_registered_device *dev,
 				dev->wiphy.max_acl_mac_addrs))
 			goto nla_put_failure;
 
+<<<<<<< HEAD
 		if (dev->wiphy.max_ap_assoc_sta &&
 		    nla_put_u32(msg, NL80211_ATTR_MAX_AP_ASSOC_STA,
 				dev->wiphy.max_ap_assoc_sta))
 			goto nla_put_failure;
 
+=======
+>>>>>>> a-3.10
 		if (dev->wiphy.n_vendor_commands) {
 			const struct nl80211_vendor_cmd_info *info;
 			struct nlattr *nested;
@@ -2500,6 +2507,9 @@ static int nl80211_new_interface(struct sk_buff *skb, struct genl_info *info)
 	enum nl80211_iftype type = NL80211_IFTYPE_UNSPECIFIED;
 	u32 flags;
 
+	/* to avoid failing a new interface creation due to pending removal */
+	cfg80211_destroy_ifaces(rdev);
+
 	memset(&params, 0, sizeof(params));
 
 	if (!info->attrs[NL80211_ATTR_IFNAME])
@@ -2543,6 +2553,9 @@ static int nl80211_new_interface(struct sk_buff *skb, struct genl_info *info)
 		nlmsg_free(msg);
 		return PTR_ERR(wdev);
 	}
+
+	if (info->attrs[NL80211_ATTR_IFACE_SOCKET_OWNER])
+		wdev->owner_nlportid = info->snd_portid;
 
 	switch (type) {
 	case NL80211_IFTYPE_MESH_POINT:
@@ -5737,6 +5750,9 @@ static int nl80211_start_sched_scan(struct sk_buff *skb,
 
 	err = rdev_sched_scan_start(rdev, dev, request);
 	if (!err) {
+		if (info->attrs[NL80211_ATTR_IFACE_SOCKET_OWNER])
+			request->owner_nlportid = info->snd_portid;
+
 		rdev->sched_scan_req = request;
 		nl80211_send_sched_scan(rdev, dev,
 					NL80211_CMD_START_SCHED_SCAN);
@@ -6831,8 +6847,11 @@ static int nl80211_testmode_dump(struct sk_buff *skb,
 	return err;
 }
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> a-3.10
 struct sk_buff *__cfg80211_alloc_event_skb(struct wiphy *wiphy,
 					   enum nl80211_commands cmd,
 					   enum nl80211_attrs attr,
@@ -6869,9 +6888,12 @@ void __cfg80211_send_event_skb(struct sk_buff *skb, gfp_t gfp)
 	void *hdr = ((void **)skb->cb)[1];
 	struct nlattr *data = ((void **)skb->cb)[2];
 
+<<<<<<< HEAD
 	/* clear CB data for netlink core to own from now on */
 	memset(skb->cb, 0, sizeof(skb->cb));
 
+=======
+>>>>>>> a-3.10
 	nla_nest_end(skb, data);
 	genlmsg_end(skb, hdr);
 
@@ -6883,6 +6905,10 @@ void __cfg80211_send_event_skb(struct sk_buff *skb, gfp_t gfp)
 			nl80211_testmode_mcgrp.id, gfp);
 }
 EXPORT_SYMBOL(__cfg80211_send_event_skb);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> a-3.10
 
 static int nl80211_connect(struct sk_buff *skb, struct genl_info *info)
 {
@@ -8607,7 +8633,11 @@ static int nl80211_vendor_cmd(struct sk_buff *skb, struct genl_info *info)
 	int i, err;
 	u32 vid, subcmd;
 
+<<<<<<< HEAD
 	if (!rdev->wiphy.vendor_commands)
+=======
+	if (!rdev || !rdev->wiphy.vendor_commands)
+>>>>>>> a-3.10
 		return -EOPNOTSUPP;
 
 	if (IS_ERR(wdev)) {
@@ -8644,7 +8674,11 @@ static int nl80211_vendor_cmd(struct sk_buff *skb, struct genl_info *info)
 				return -EINVAL;
 
 			if (vcmd->flags & WIPHY_VENDOR_CMD_NEED_RUNNING) {
+<<<<<<< HEAD
 				if (wdev->netdev &&
+=======
+				if (!wdev->netdev ||
+>>>>>>> a-3.10
 				    !netif_running(wdev->netdev))
 					return -ENETDOWN;
 			}
@@ -8659,9 +8693,14 @@ static int nl80211_vendor_cmd(struct sk_buff *skb, struct genl_info *info)
 
 		rdev->cur_cmd_info = info;
 		err = rdev->wiphy.vendor_commands[i].doit(&rdev->wiphy, wdev,
+<<<<<<< HEAD
 							   data, len);
 		rdev->cur_cmd_info = NULL;
 
+=======
+								data, len);
+		rdev->cur_cmd_info = NULL;
+>>>>>>> a-3.10
 		return err;
 	}
 
@@ -8679,8 +8718,13 @@ struct sk_buff *__cfg80211_alloc_reply_skb(struct wiphy *wiphy,
 		return NULL;
 
 	return __cfg80211_alloc_vendor_skb(rdev, approxlen,
+<<<<<<< HEAD
 					   rdev->cur_cmd_info->snd_portid,
 					   rdev->cur_cmd_info->snd_seq,
+=======
+					   0,
+					   0,
+>>>>>>> a-3.10
 					   cmd, attr, NULL, GFP_KERNEL);
 }
 EXPORT_SYMBOL(__cfg80211_alloc_reply_skb);
@@ -8702,6 +8746,7 @@ int cfg80211_vendor_cmd_reply(struct sk_buff *skb)
 }
 EXPORT_SYMBOL(cfg80211_vendor_cmd_reply);
 
+<<<<<<< HEAD
 static int nl80211_set_qos_map(struct sk_buff *skb,
 			       struct genl_info *info)
 {
@@ -8753,6 +8798,8 @@ static int nl80211_set_qos_map(struct sk_buff *skb,
 	return ret;
 }
 
+=======
+>>>>>>> a-3.10
 #define NL80211_FLAG_NEED_WIPHY		0x01
 #define NL80211_FLAG_NEED_NETDEV	0x02
 #define NL80211_FLAG_NEED_RTNL		0x04
@@ -9466,6 +9513,7 @@ static struct genl_ops nl80211_ops[] = {
 		.internal_flags = NL80211_FLAG_NEED_WIPHY |
 				  NL80211_FLAG_NEED_RTNL,
 	},
+<<<<<<< HEAD
 	{
 		.cmd = NL80211_CMD_SET_QOS_MAP,
 		.doit = nl80211_set_qos_map,
@@ -9474,6 +9522,8 @@ static struct genl_ops nl80211_ops[] = {
 		.internal_flags = NL80211_FLAG_NEED_NETDEV_UP |
 				  NL80211_FLAG_NEED_RTNL,
 	},
+=======
+>>>>>>> a-3.10
 };
 
 static struct genl_multicast_group nl80211_mlme_mcgrp = {
@@ -11159,8 +11209,21 @@ static int nl80211_netlink_notify(struct notifier_block * nb,
 	rcu_read_lock();
 
 	list_for_each_entry_rcu(rdev, &cfg80211_rdev_list, list) {
-		list_for_each_entry_rcu(wdev, &rdev->wdev_list, list)
+		bool schedule_destroy_work = false;
+		bool schedule_scan_stop = false;
+		struct cfg80211_sched_scan_request *sched_scan_req =
+			rcu_dereference(rdev->sched_scan_req);
+
+		if (sched_scan_req && notify->portid &&
+		    sched_scan_req->owner_nlportid == notify->portid)
+			schedule_scan_stop = true;
+
+		list_for_each_entry_rcu(wdev, &rdev->wdev_list, list) {
 			cfg80211_mlme_unregister_socket(wdev, notify->portid);
+
+			if (wdev->owner_nlportid == notify->portid)
+				schedule_destroy_work = true;
+		}
 
 		spin_lock_bh(&rdev->beacon_registrations_lock);
 		list_for_each_entry_safe(reg, tmp, &rdev->beacon_registrations,
@@ -11172,6 +11235,25 @@ static int nl80211_netlink_notify(struct notifier_block * nb,
 			}
 		}
 		spin_unlock_bh(&rdev->beacon_registrations_lock);
+
+		if (schedule_destroy_work) {
+			struct cfg80211_iface_destroy *destroy;
+
+			destroy = kzalloc(sizeof(*destroy), GFP_ATOMIC);
+			if (destroy) {
+				destroy->nlportid = notify->portid;
+				spin_lock(&rdev->destroy_list_lock);
+				list_add(&destroy->list, &rdev->destroy_list);
+				spin_unlock(&rdev->destroy_list_lock);
+				schedule_work(&rdev->destroy_work);
+			}
+		} else if (schedule_scan_stop) {
+			sched_scan_req->owner_nlportid = 0;
+
+			if (rdev->ops->sched_scan_stop &&
+			    rdev->wiphy.flags & WIPHY_FLAG_SUPPORTS_SCHED_SCAN)
+				schedule_work(&rdev->sched_scan_stop_wk);
+		}
 	}
 
 	rcu_read_unlock();
@@ -11310,6 +11392,10 @@ int nl80211_init(void)
 
 #ifdef CONFIG_NL80211_TESTMODE
 	err = genl_register_mc_group(&nl80211_fam, &nl80211_testmode_mcgrp);
+	if (err)
+		goto err_out;
+
+	err = genl_register_mc_group(&nl80211_fam, &nl80211_vendor_mcgrp);
 	if (err)
 		goto err_out;
 #endif

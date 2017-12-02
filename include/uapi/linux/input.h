@@ -753,9 +753,12 @@ struct input_keymap_entry {
 #define KEY_BRIGHTNESS_MIN		0x250	/* Set Brightness to Minimum */
 #define KEY_BRIGHTNESS_MAX		0x251	/* Set Brightness to Maximum */
 
+<<<<<<< HEAD
 #define KEY_PEN_PDCT		0x230 /* E-PEN PDCT flag*/
 
 
+=======
+>>>>>>> a-3.10
 #define BTN_TRIGGER_HAPPY		0x2c0
 #define BTN_TRIGGER_HAPPY1		0x2c0
 #define BTN_TRIGGER_HAPPY2		0x2c1
@@ -910,6 +913,7 @@ struct input_keymap_entry {
 #define SW_FRONT_PROXIMITY	0x0b  /* set = front proximity sensor active */
 #define SW_ROTATE_LOCK		0x0c  /* set = rotate locked/disabled */
 #define SW_LINEIN_INSERT	0x0d  /* set = inserted */
+<<<<<<< HEAD
 #define SW_HPHL_OVERCURRENT	0x0e  /* set = over current on left hph */
 #define SW_HPHR_OVERCURRENT	0x0f  /* set = over current on right hph */
 #define SW_UNSUPPORT_INSERT	0x10  /* set = unsupported device inserted */
@@ -925,6 +929,10 @@ struct input_keymap_entry {
 #define SW_W1			0x1A  /* set = w1_slave */
 
 #define SW_MAX			0x20
+=======
+#define SW_MUTE_DEVICE		0x0e  /* set = device disabled */
+#define SW_MAX			0x0f
+>>>>>>> a-3.10
 #define SW_CNT			(SW_MAX+1)
 
 /*

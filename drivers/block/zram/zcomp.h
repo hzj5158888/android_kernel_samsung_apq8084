@@ -33,7 +33,11 @@ struct zcomp_backend {
 	int (*decompress)(const unsigned char *src, size_t src_len,
 			unsigned char *dst);
 
+<<<<<<< HEAD
 	void *(*create)(void);
+=======
+	void *(*create)(gfp_t flags);
+>>>>>>> a-3.10
 	void (*destroy)(void *private);
 
 	const char *name;

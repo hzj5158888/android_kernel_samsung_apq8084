@@ -68,6 +68,9 @@ static uint32_t oom_count = 0;
 #define OOM_DEPTH 4
 #endif
 
+#define CREATE_TRACE_POINTS
+#include "trace/lowmemorykiller.h"
+
 static uint32_t lowmem_debug_level = 1;
 static short lowmem_adj[6] = {
 	0,
@@ -167,6 +170,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	int selected_hotness_adj = 0;
 #endif
 	int array_size = ARRAY_SIZE(lowmem_adj);
+<<<<<<< HEAD
 	int other_free;
 	int other_file;
 	unsigned long nr_to_scan = sc->nr_to_scan;
@@ -213,6 +217,12 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		other_file = other_file - ( global_page_state(NR_SHMEM) + total_swapcache_pages());
 	else
 		other_file = 0;
+=======
+	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
+	int other_file = global_page_state(NR_FILE_PAGES) -
+						global_page_state(NR_SHMEM) -
+						total_swapcache_pages();
+>>>>>>> a-3.10
 
 	if (lowmem_adj_size < array_size)
 		array_size = lowmem_adj_size;
@@ -322,6 +332,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     p->comm, p->pid, oom_score_adj, tasksize);
 	}
 	if (selected) {
+<<<<<<< HEAD
 #if defined(CONFIG_CMA_PAGE_COUNTING)
 		lowmem_print(1, "Killing '%s' (%d), adj %hd,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
@@ -341,6 +352,12 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     nr_cma_inactive_file * (long)(PAGE_SIZE / 1024),
 			     nr_cma_active_file * (long)(PAGE_SIZE / 1024));
 #else
+=======
+		long cache_size = other_file * (long)(PAGE_SIZE / 1024);
+		long cache_limit = minfree * (long)(PAGE_SIZE / 1024);
+		long free = other_free * (long)(PAGE_SIZE / 1024);
+		trace_lowmemory_kill(selected, cache_size, cache_limit, free);
+>>>>>>> a-3.10
 		lowmem_print(1, "Killing '%s' (%d), adj %hd,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
 				"   cache %ldkB is below limit %ldkB for oom_score_adj %hd\n" \
@@ -350,16 +367,19 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     selected_oom_score_adj,
 			     selected_tasksize * (long)(PAGE_SIZE / 1024),
 			     current->comm, current->pid,
-			     other_file * (long)(PAGE_SIZE / 1024),
-			     minfree * (long)(PAGE_SIZE / 1024),
+			     cache_size, cache_limit,
 			     min_score_adj,
+<<<<<<< HEAD
 			     other_free * (long)(PAGE_SIZE / 1024),
 			     !!current_is_kswapd(),
 			     nr_cma_free, sc->priority);
 #endif
+=======
+			     free);
+>>>>>>> a-3.10
 		lowmem_deathpending_timeout = jiffies + HZ;
-		send_sig(SIGKILL, selected, 0);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
+		send_sig(SIGKILL, selected, 0);
 		rem -= selected_tasksize;
 		rcu_read_unlock();
 #ifdef LMK_COUNT_READ

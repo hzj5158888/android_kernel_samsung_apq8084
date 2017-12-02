@@ -97,7 +97,7 @@ u32 seccomp_bpf_load(int off)
 	if (off == BPF_DATA(nr))
 		return syscall_get_nr(current, regs);
 	if (off == BPF_DATA(arch))
-		return syscall_get_arch(current, regs);
+		return syscall_get_arch();
 	if (off >= BPF_DATA(args[0]) && off < BPF_DATA(args[6])) {
 		unsigned long value;
 		int arg = (off - BPF_DATA(args[0])) / sizeof(u64);
@@ -264,6 +264,7 @@ static int is_ancestor(struct seccomp_filter *parent,
 			return 1;
 	return 0;
 }
+<<<<<<< HEAD
 
 /**
  * seccomp_can_sync_threads: checks if all threads can be synchronized
@@ -308,6 +309,52 @@ static inline pid_t seccomp_can_sync_threads(void)
 }
 
 /**
+=======
+
+/**
+ * seccomp_can_sync_threads: checks if all threads can be synchronized
+ *
+ * Expects sighand and cred_guard_mutex locks to be held.
+ *
+ * Returns 0 on success, -ve on error, or the pid of a thread which was
+ * either not in the correct seccomp mode or it did not have an ancestral
+ * seccomp filter.
+ */
+static inline pid_t seccomp_can_sync_threads(void)
+{
+	struct task_struct *thread, *caller;
+
+	BUG_ON(!mutex_is_locked(&current->signal->cred_guard_mutex));
+	assert_spin_locked(&current->sighand->siglock);
+
+	/* Validate all threads being eligible for synchronization. */
+	caller = current;
+	for_each_thread(caller, thread) {
+		pid_t failed;
+
+		/* Skip current, since it is initiating the sync. */
+		if (thread == caller)
+			continue;
+
+		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED ||
+		    (thread->seccomp.mode == SECCOMP_MODE_FILTER &&
+		     is_ancestor(thread->seccomp.filter,
+				 caller->seccomp.filter)))
+			continue;
+
+		/* Return the first thread that cannot be synchronized. */
+		failed = task_pid_vnr(thread);
+		/* If the pid cannot be resolved, then return -ESRCH */
+		if (unlikely(WARN_ON(failed == 0)))
+			failed = -ESRCH;
+		return failed;
+	}
+
+	return 0;
+}
+
+/**
+>>>>>>> a-3.10
  * seccomp_sync_threads: sets all threads to use current's filter
  *
  * Expects sighand and cred_guard_mutex locks to be held, and for
@@ -339,12 +386,26 @@ static inline void seccomp_sync_threads(void)
 		put_seccomp_filter(thread);
 		smp_store_release(&thread->seccomp.filter,
 				  caller->seccomp.filter);
+<<<<<<< HEAD
+=======
+
+		/*
+		 * Don't let an unprivileged task work around
+		 * the no_new_privs restriction by creating
+		 * a thread that sets it up, enters seccomp,
+		 * then dies.
+		 */
+		if (task_no_new_privs(caller))
+			task_set_no_new_privs(thread);
+
+>>>>>>> a-3.10
 		/*
 		 * Opt the other thread into seccomp if needed.
 		 * As threads are considered to be trust-realm
 		 * equivalent (see ptrace_may_access), it is safe to
 		 * allow one thread to transition the other.
 		 */
+<<<<<<< HEAD
 		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED) {
 			/*
 			 * Don't let an unprivileged task work around
@@ -357,6 +418,10 @@ static inline void seccomp_sync_threads(void)
 
 			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER);
 		}
+=======
+		if (thread->seccomp.mode == SECCOMP_MODE_DISABLED)
+			seccomp_assign_mode(thread, SECCOMP_MODE_FILTER);
+>>>>>>> a-3.10
 	}
 }
 
@@ -542,7 +607,7 @@ static void seccomp_send_sigsys(int syscall, int reason)
 	info.si_code = SYS_SECCOMP;
 	info.si_call_addr = (void __user *)KSTK_EIP(current);
 	info.si_errno = reason;
-	info.si_arch = syscall_get_arch(current, task_pt_regs(current));
+	info.si_arch = syscall_get_arch();
 	info.si_syscall = syscall;
 	force_sig_info(SIGSYS, &info, current);
 }
@@ -600,7 +665,9 @@ int __secure_computing(int this_syscall)
 		ret &= SECCOMP_RET_ACTION;
 		switch (ret) {
 		case SECCOMP_RET_ERRNO:
-			/* Set the low-order 16-bits as a errno. */
+			/* Set low-order bits as an errno, capped at MAX_ERRNO. */
+			if (data > MAX_ERRNO)
+				data = MAX_ERRNO;
 			syscall_set_return_value(current, regs,
 						 -data, 0);
 			goto skip;
@@ -664,6 +731,7 @@ long prctl_get_seccomp(void)
 
 /**
  * seccomp_set_mode_strict: internal function for setting strict seccomp
+<<<<<<< HEAD
  *
  * Once current->seccomp.mode is non-zero, it may not be changed.
  *
@@ -697,6 +765,41 @@ out:
  * @flags:  flags to change filter behavior
  * @filter: struct sock_fprog containing filter
  *
+=======
+ *
+ * Once current->seccomp.mode is non-zero, it may not be changed.
+ *
+ * Returns 0 on success or -EINVAL on failure.
+ */
+static long seccomp_set_mode_strict(void)
+{
+	const unsigned long seccomp_mode = SECCOMP_MODE_STRICT;
+	long ret = -EINVAL;
+
+	spin_lock_irq(&current->sighand->siglock);
+
+	if (!seccomp_may_assign_mode(seccomp_mode))
+		goto out;
+
+#ifdef TIF_NOTSC
+	disable_TSC();
+#endif
+	seccomp_assign_mode(current, seccomp_mode);
+	ret = 0;
+
+out:
+	spin_unlock_irq(&current->sighand->siglock);
+
+	return ret;
+}
+
+#ifdef CONFIG_SECCOMP_FILTER
+/**
+ * seccomp_set_mode_filter: internal function for setting seccomp filter
+ * @flags:  flags to change filter behavior
+ * @filter: struct sock_fprog containing filter
+ *
+>>>>>>> a-3.10
  * This function may be called repeatedly to install additional filters.
  * Every filter successfully installed will be evaluated (in reverse order)
  * for each system call the task makes.

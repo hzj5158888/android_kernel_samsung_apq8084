@@ -477,6 +477,7 @@ CONFIG_SECURITY_PERF_EVENTS_RESTRICT is set, or 1 otherwise.
 >=3: Disallow all event access by users without CAP_SYS_ADMIN
 
 ==============================================================
+<<<<<<< HEAD
 
 perf_cpu_time_max_percent:
 
@@ -503,6 +504,8 @@ allowed to execute.
    how much CPU is consumed.
 
 ==============================================================
+=======
+>>>>>>> a-3.10
 
 pid_max:
 

@@ -34,11 +34,18 @@ static void *ion_page_pool_alloc_pages(struct ion_page_pool *pool)
 
 	if (!page)
 		return NULL;
+<<<<<<< HEAD:drivers/staging/android/ion/ion_page_pool.c
 
 	if (pool->gfp_mask & __GFP_ZERO)
 		if (msm_ion_heap_high_order_page_zero(page, pool->order))
 			goto error_free_pages;
 
+=======
+	ion_page_pool_alloc_set_cache_policy(pool, page);
+
+	ion_pages_sync_for_device(NULL, page, PAGE_SIZE << pool->order,
+						DMA_BIDIRECTIONAL);
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_page_pool.c
 	return page;
 error_free_pages:
 	__free_pages(page, pool->order);
@@ -48,6 +55,7 @@ error_free_pages:
 static void ion_page_pool_free_pages(struct ion_page_pool *pool,
 				     struct page *page)
 {
+	ion_page_pool_free_set_cache_policy(pool, page);
 	__free_pages(page, pool->order);
 }
 
@@ -114,6 +122,11 @@ void ion_page_pool_free(struct ion_page_pool *pool, struct page *page)
 		ion_page_pool_free_pages(pool, page);
 }
 
+void ion_page_pool_free_immediate(struct ion_page_pool *pool, struct page *page)
+{
+	ion_page_pool_free_pages(pool, page);
+}
+
 static int ion_page_pool_total(struct ion_page_pool *pool, bool high)
 {
 	int total = 0;
@@ -130,6 +143,7 @@ int ion_page_pool_shrink(struct ion_page_pool *pool, gfp_t gfp_mask,
 	int i;
 	bool high;
 
+<<<<<<< HEAD:drivers/staging/android/ion/ion_page_pool.c
 	if (current_is_kswapd())
 		high = 1;
 	else
@@ -137,6 +151,9 @@ int ion_page_pool_shrink(struct ion_page_pool *pool, gfp_t gfp_mask,
 
 	if (current_is_kswapd())
 		high = 1;
+=======
+	high = !!(gfp_mask & __GFP_HIGHMEM);
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_page_pool.c
 
 	for (i = 0; i < nr_to_scan; i++) {
 		struct page *page;

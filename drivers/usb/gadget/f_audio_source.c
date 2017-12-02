@@ -26,7 +26,11 @@
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_MSEC (SAMPLE_RATE / 1000)
 
+<<<<<<< HEAD
 #define IN_EP_MAX_PACKET_SIZE	256
+=======
+#define IN_EP_MAX_PACKET_SIZE 256
+>>>>>>> a-3.10
 
 /* Number of requests to allocate */
 #define IN_EP_REQ_COUNT 4
@@ -36,7 +40,11 @@
 #define AUDIO_NUM_INTERFACES	2
 
 /* B.3.1  Standard AC Interface Descriptor */
+<<<<<<< HEAD
 static struct usb_interface_descriptor audio_source_ac_interface_desc = {
+=======
+static struct usb_interface_descriptor audio_ac_interface_desc = {
+>>>>>>> a-3.10
 	.bLength =		USB_DT_INTERFACE_SIZE,
 	.bDescriptorType =	USB_DT_INTERFACE,
 	.bNumEndpoints =	0,
@@ -50,7 +58,11 @@ static struct usb_interface_descriptor audio_source_ac_interface_desc = {
 	+ UAC_DT_INPUT_TERMINAL_SIZE + UAC_DT_OUTPUT_TERMINAL_SIZE \
 	+ UAC_DT_FEATURE_UNIT_SIZE(0))
 /* B.3.2  Class-Specific AC Interface Descriptor */
+<<<<<<< HEAD
 static struct uac1_ac_header_descriptor_2 audio_source_ac_header_desc = {
+=======
+static struct uac1_ac_header_descriptor_2 audio_ac_header_desc = {
+>>>>>>> a-3.10
 	.bLength =		UAC_DT_AC_HEADER_LENGTH,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype =	UAC_HEADER,
@@ -64,7 +76,7 @@ static struct uac1_ac_header_descriptor_2 audio_source_ac_header_desc = {
 };
 
 #define INPUT_TERMINAL_ID	1
-static struct uac_input_terminal_descriptor input_terminal_desc = {
+static struct uac_input_terminal_descriptor audio_input_terminal_desc = {
 	.bLength =		UAC_DT_INPUT_TERMINAL_SIZE,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype =	UAC_INPUT_TERMINAL,
@@ -77,7 +89,7 @@ static struct uac_input_terminal_descriptor input_terminal_desc = {
 DECLARE_UAC_FEATURE_UNIT_DESCRIPTOR(0);
 
 #define FEATURE_UNIT_ID		2
-static struct uac_feature_unit_descriptor_0 feature_unit_desc = {
+static struct uac_feature_unit_descriptor_0 audio_feature_unit_desc = {
 	.bLength		= UAC_DT_FEATURE_UNIT_SIZE(0),
 	.bDescriptorType	= USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype	= UAC_FEATURE_UNIT,
@@ -87,7 +99,7 @@ static struct uac_feature_unit_descriptor_0 feature_unit_desc = {
 };
 
 #define OUTPUT_TERMINAL_ID	3
-static struct uac1_output_terminal_descriptor output_terminal_desc = {
+static struct uac1_output_terminal_descriptor audio_output_terminal_desc = {
 	.bLength		= UAC_DT_OUTPUT_TERMINAL_SIZE,
 	.bDescriptorType	= USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype	= UAC_OUTPUT_TERMINAL,
@@ -98,7 +110,7 @@ static struct uac1_output_terminal_descriptor output_terminal_desc = {
 };
 
 /* B.4.1  Standard AS Interface Descriptor */
-static struct usb_interface_descriptor as_interface_alt_0_desc = {
+static struct usb_interface_descriptor audio_as_interface_alt_0_desc = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
 	.bDescriptorType =	USB_DT_INTERFACE,
 	.bAlternateSetting =	0,
@@ -107,7 +119,7 @@ static struct usb_interface_descriptor as_interface_alt_0_desc = {
 	.bInterfaceSubClass =	USB_SUBCLASS_AUDIOSTREAMING,
 };
 
-static struct usb_interface_descriptor as_interface_alt_1_desc = {
+static struct usb_interface_descriptor audio_as_interface_alt_1_desc = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
 	.bDescriptorType =	USB_DT_INTERFACE,
 	.bAlternateSetting =	1,
@@ -117,7 +129,7 @@ static struct usb_interface_descriptor as_interface_alt_1_desc = {
 };
 
 /* B.4.2  Class-Specific AS Interface Descriptor */
-static struct uac1_as_header_descriptor as_header_desc = {
+static struct uac1_as_header_descriptor audio_as_header_desc = {
 	.bLength =		UAC_DT_AS_HEADER_SIZE,
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype =	UAC_AS_GENERAL,
@@ -126,7 +138,13 @@ static struct uac1_as_header_descriptor as_header_desc = {
 	.wFormatTag =		UAC_FORMAT_TYPE_I_PCM,
 };
 
+<<<<<<< HEAD
 static struct uac_format_type_i_discrete_descriptor_1 as_type_i_desc = {
+=======
+DECLARE_UAC_FORMAT_TYPE_I_DISCRETE_DESC(1);
+
+static struct uac_format_type_i_discrete_descriptor_1 audio_as_type_i_desc = {
+>>>>>>> a-3.10
 	.bLength =		UAC_FORMAT_TYPE_I_DISCRETE_DESC_SIZE(1),
 	.bDescriptorType =	USB_DT_CS_INTERFACE,
 	.bDescriptorSubtype =	UAC_FORMAT_TYPE,
@@ -137,7 +155,7 @@ static struct uac_format_type_i_discrete_descriptor_1 as_type_i_desc = {
 };
 
 /* Standard ISO IN Endpoint Descriptor for highspeed */
-static struct usb_endpoint_descriptor hs_as_in_ep_desc  = {
+static struct usb_endpoint_descriptor audio_hs_as_in_ep_desc  = {
 	.bLength =		USB_DT_ENDPOINT_AUDIO_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 	.bEndpointAddress =	USB_DIR_IN,
@@ -148,7 +166,7 @@ static struct usb_endpoint_descriptor hs_as_in_ep_desc  = {
 };
 
 /* Standard ISO IN Endpoint Descriptor for highspeed */
-static struct usb_endpoint_descriptor fs_as_in_ep_desc  = {
+static struct usb_endpoint_descriptor audio_fs_as_in_ep_desc  = {
 	.bLength =		USB_DT_ENDPOINT_AUDIO_SIZE,
 	.bDescriptorType =	USB_DT_ENDPOINT,
 	.bEndpointAddress =	USB_DIR_IN,
@@ -159,7 +177,7 @@ static struct usb_endpoint_descriptor fs_as_in_ep_desc  = {
 };
 
 /* Class-specific AS ISO OUT Endpoint Descriptor */
-static struct uac_iso_endpoint_descriptor as_iso_in_desc = {
+static struct uac_iso_endpoint_descriptor audio_as_iso_in_desc = {
 	.bLength =		UAC_ISO_ENDPOINT_DESC_SIZE,
 	.bDescriptorType =	USB_DT_CS_ENDPOINT,
 	.bDescriptorSubtype =	UAC_EP_GENERAL,
@@ -169,40 +187,50 @@ static struct uac_iso_endpoint_descriptor as_iso_in_desc = {
 };
 
 static struct usb_descriptor_header *hs_audio_desc[] = {
+<<<<<<< HEAD
 	(struct usb_descriptor_header *)&audio_source_ac_interface_desc,
 	(struct usb_descriptor_header *)&audio_source_ac_header_desc,
+=======
+	(struct usb_descriptor_header *)&audio_ac_interface_desc,
+	(struct usb_descriptor_header *)&audio_ac_header_desc,
+>>>>>>> a-3.10
 
-	(struct usb_descriptor_header *)&input_terminal_desc,
-	(struct usb_descriptor_header *)&output_terminal_desc,
-	(struct usb_descriptor_header *)&feature_unit_desc,
+	(struct usb_descriptor_header *)&audio_input_terminal_desc,
+	(struct usb_descriptor_header *)&audio_output_terminal_desc,
+	(struct usb_descriptor_header *)&audio_feature_unit_desc,
 
-	(struct usb_descriptor_header *)&as_interface_alt_0_desc,
-	(struct usb_descriptor_header *)&as_interface_alt_1_desc,
-	(struct usb_descriptor_header *)&as_header_desc,
+	(struct usb_descriptor_header *)&audio_as_interface_alt_0_desc,
+	(struct usb_descriptor_header *)&audio_as_interface_alt_1_desc,
+	(struct usb_descriptor_header *)&audio_as_header_desc,
 
-	(struct usb_descriptor_header *)&as_type_i_desc,
+	(struct usb_descriptor_header *)&audio_as_type_i_desc,
 
-	(struct usb_descriptor_header *)&hs_as_in_ep_desc,
-	(struct usb_descriptor_header *)&as_iso_in_desc,
+	(struct usb_descriptor_header *)&audio_hs_as_in_ep_desc,
+	(struct usb_descriptor_header *)&audio_as_iso_in_desc,
 	NULL,
 };
 
 static struct usb_descriptor_header *fs_audio_desc[] = {
+<<<<<<< HEAD
 	(struct usb_descriptor_header *)&audio_source_ac_interface_desc,
 	(struct usb_descriptor_header *)&audio_source_ac_header_desc,
+=======
+	(struct usb_descriptor_header *)&audio_ac_interface_desc,
+	(struct usb_descriptor_header *)&audio_ac_header_desc,
+>>>>>>> a-3.10
 
-	(struct usb_descriptor_header *)&input_terminal_desc,
-	(struct usb_descriptor_header *)&output_terminal_desc,
-	(struct usb_descriptor_header *)&feature_unit_desc,
+	(struct usb_descriptor_header *)&audio_input_terminal_desc,
+	(struct usb_descriptor_header *)&audio_output_terminal_desc,
+	(struct usb_descriptor_header *)&audio_feature_unit_desc,
 
-	(struct usb_descriptor_header *)&as_interface_alt_0_desc,
-	(struct usb_descriptor_header *)&as_interface_alt_1_desc,
-	(struct usb_descriptor_header *)&as_header_desc,
+	(struct usb_descriptor_header *)&audio_as_interface_alt_0_desc,
+	(struct usb_descriptor_header *)&audio_as_interface_alt_1_desc,
+	(struct usb_descriptor_header *)&audio_as_header_desc,
 
-	(struct usb_descriptor_header *)&as_type_i_desc,
+	(struct usb_descriptor_header *)&audio_as_type_i_desc,
 
-	(struct usb_descriptor_header *)&fs_as_in_ep_desc,
-	(struct usb_descriptor_header *)&as_iso_in_desc,
+	(struct usb_descriptor_header *)&audio_fs_as_in_ep_desc,
+	(struct usb_descriptor_header *)&audio_as_iso_in_desc,
 	NULL,
 };
 
@@ -271,6 +299,7 @@ static inline struct audio_dev *audio_source_func_to_audio(struct usb_function *
 static struct usb_request *audio_request_new(struct usb_ep *ep, int buffer_size)
 {
 	struct usb_request *req = usb_ep_alloc_request(ep, GFP_KERNEL);
+
 	if (!req)
 		return NULL;
 
@@ -520,7 +549,7 @@ audio_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
 	return value;
 }
 
-static int audio_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+static int audio_set_alt(struct usb_function *f, unsigned int intf, unsigned int alt)
 {
 	struct audio_dev *audio = audio_source_func_to_audio(f);
 	struct usb_composite_dev *cdev = f->config->cdev;
@@ -563,12 +592,12 @@ static void audio_build_desc(struct audio_dev *audio)
 	int rate;
 
 	/* Set channel numbers */
-	input_terminal_desc.bNrChannels = 2;
-	as_type_i_desc.bNrChannels = 2;
+	audio_input_terminal_desc.bNrChannels = 2;
+	audio_as_type_i_desc.bNrChannels = 2;
 
 	/* Set sample rates */
 	rate = SAMPLE_RATE;
-	sam_freq = as_type_i_desc.tSamFreq[0];
+	sam_freq = audio_as_type_i_desc.tSamFreq[0];
 	memcpy(sam_freq, &rate, 3);
 }
 
@@ -589,26 +618,36 @@ audio_bind(struct usb_configuration *c, struct usb_function *f)
 	status = usb_interface_id(c, f);
 	if (status < 0)
 		goto fail;
+<<<<<<< HEAD
 	audio_source_ac_interface_desc.bInterfaceNumber = status;
+=======
+	audio_ac_interface_desc.bInterfaceNumber = status;
+
+	/* AUDIO_AC_INTERFACE */
+	audio_ac_header_desc.baInterfaceNr[0] = status;
+>>>>>>> a-3.10
 
 	status = usb_interface_id(c, f);
 	if (status < 0)
 		goto fail;
-	as_interface_alt_0_desc.bInterfaceNumber = status;
-	as_interface_alt_1_desc.bInterfaceNumber = status;
+	audio_as_interface_alt_0_desc.bInterfaceNumber = status;
+	audio_as_interface_alt_1_desc.bInterfaceNumber = status;
+
+	/* AUDIO_AS_INTERFACE */
+	audio_ac_header_desc.baInterfaceNr[1] = status;
 
 	status = -ENODEV;
 
 	/* allocate our endpoint */
-	ep = usb_ep_autoconfig(cdev->gadget, &fs_as_in_ep_desc);
+	ep = usb_ep_autoconfig(cdev->gadget, &audio_fs_as_in_ep_desc);
 	if (!ep)
 		goto fail;
 	audio->in_ep = ep;
 	ep->driver_data = audio; /* claim */
 
 	if (gadget_is_dualspeed(c->cdev->gadget))
-		hs_as_in_ep_desc.bEndpointAddress =
-			fs_as_in_ep_desc.bEndpointAddress;
+		audio_hs_as_in_ep_desc.bEndpointAddress =
+			audio_fs_as_in_ep_desc.bEndpointAddress;
 
 	f->fs_descriptors = fs_audio_desc;
 	f->hs_descriptors = hs_audio_desc;

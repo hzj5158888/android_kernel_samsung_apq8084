@@ -58,6 +58,7 @@ extern struct ping_table ping_table;
 #if IS_ENABLED(CONFIG_IPV6)
 extern struct pingv6_ops pingv6_ops;
 #endif
+<<<<<<< HEAD
 
 struct pingfakehdr {
 	struct icmphdr icmph;
@@ -77,6 +78,27 @@ void ping_err(struct sk_buff *skb, int offset, u32 info);
 int  ping_getfrag(void *from, char *to, int offset, int fraglen, int odd,
 		  struct sk_buff *);
 
+=======
+
+struct pingfakehdr {
+	struct icmphdr icmph;
+	struct iovec *iov;
+	sa_family_t family;
+	__wsum wcheck;
+};
+
+int  ping_get_port(struct sock *sk, unsigned short ident);
+void ping_hash(struct sock *sk);
+void ping_unhash(struct sock *sk);
+
+int  ping_init_sock(struct sock *sk);
+void ping_close(struct sock *sk, long timeout);
+int  ping_bind(struct sock *sk, struct sockaddr *uaddr, int addr_len);
+void ping_err(struct sk_buff *skb, int offset, u32 info);
+int  ping_getfrag(void *from, char *to, int offset, int fraglen, int odd,
+		  struct sk_buff *);
+
+>>>>>>> a-3.10
 int  ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 		  size_t len, int noblock, int flags, int *addr_len);
 int  ping_common_sendmsg(int family, struct msghdr *msg, size_t len,

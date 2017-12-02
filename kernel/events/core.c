@@ -3482,11 +3482,19 @@ perf_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
 	struct perf_event *event = file->private_data;
 	struct perf_event_context *ctx;
 	int ret;
+<<<<<<< HEAD
 
 	ctx = perf_event_ctx_lock(event);
 	ret = perf_read_hw(event, buf, count);
 	perf_event_ctx_unlock(event, ctx);
 
+=======
+
+	ctx = perf_event_ctx_lock(event);
+	ret = perf_read_hw(event, buf, count);
+	perf_event_ctx_unlock(event, ctx);
+
+>>>>>>> a-3.10
 	return ret;
 }
 
@@ -3674,6 +3682,7 @@ static long perf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	return ret;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_COMPAT
 static long perf_compat_ioctl(struct file *file, unsigned int cmd,
 				unsigned long arg)
@@ -3693,6 +3702,8 @@ static long perf_compat_ioctl(struct file *file, unsigned int cmd,
 # define perf_compat_ioctl NULL
 #endif
 
+=======
+>>>>>>> a-3.10
 int perf_event_task_enable(void)
 {
 	struct perf_event_context *ctx;
@@ -7162,7 +7173,11 @@ SYSCALL_DEFINE5(perf_event_open,
 		 * See perf_event_ctx_lock() for comments on the details
 		 * of swizzling perf_event::ctx.
 		 */
+<<<<<<< HEAD
 		perf_remove_from_context(group_leader, false);
+=======
+		perf_remove_from_context(group_leader);
+>>>>>>> a-3.10
 
 		/*
 		 * Removing from the context ends up with disabled
@@ -7188,7 +7203,12 @@ SYSCALL_DEFINE5(perf_event_open,
 		 * the old lists, before installing it on new lists.
 		 */
 		synchronize_rcu();
+<<<<<<< HEAD
 		perf_install_in_context(ctx, group_leader, group_leader->cpu);
+=======
+
+		perf_install_in_context(ctx, group_leader, event->cpu);
+>>>>>>> a-3.10
 		get_ctx(ctx);
 		list_for_each_entry(sibling, &group_leader->sibling_list,
 				    group_entry) {
@@ -7876,12 +7896,21 @@ static void __perf_event_exit_context(void *__info)
 {
 	struct remove_event re = { .detach_group = false };
 	struct perf_event_context *ctx = __info;
+<<<<<<< HEAD
+=======
+	struct perf_event *event;
+>>>>>>> a-3.10
 
 	perf_pmu_rotate_stop(ctx->pmu);
 
 	rcu_read_lock();
+<<<<<<< HEAD
 	list_for_each_entry_rcu(re.event, &ctx->event_list, event_entry)
 		__perf_remove_from_context(&re);
+=======
+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
+		__perf_remove_from_context(event);
+>>>>>>> a-3.10
 	rcu_read_unlock();
 }
 

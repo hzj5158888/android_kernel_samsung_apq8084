@@ -23,9 +23,12 @@
 #include <linux/sched.h>
 #include <linux/scatterlist.h>
 #include <linux/vmalloc.h>
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 #include <linux/slab.h>
 #include <linux/highmem.h>
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 #include "ion.h"
 #include "ion_priv.h"
 
@@ -52,6 +55,7 @@ void *ion_heap_map_kernel(struct ion_heap *heap,
 	for_each_sg(table->sgl, sg, table->nents, i) {
 		int npages_this_entry = PAGE_ALIGN(sg->length) / PAGE_SIZE;
 		struct page *page = sg_page(sg);
+
 		BUG_ON(i >= npages);
 		for (j = 0; j < npages_this_entry; j++)
 			*(tmp++) = page++;
@@ -80,6 +84,7 @@ int ion_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
 	struct scatterlist *sg;
 	int i;
 	int ret;
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 #ifdef CONFIG_TIMA_RKP
         if ((buffer->size) && (boot_mode_security == 1)) {
         /* iommu optimization- needs to be turned ON from
@@ -92,6 +97,9 @@ int ion_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
                 "isb\n");
         }
 #endif
+=======
+
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 	for_each_sg(table->sgl, sg, table->nents, i) {
 		struct page *page = sg_page(sg);
 		unsigned long remainder = vma->vm_end - addr;
@@ -120,6 +128,10 @@ int ion_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
 static int ion_heap_clear_pages(struct page **pages, int num, pgprot_t pgprot)
 {
 	void *addr = vm_map_ram(pages, num, -1, pgprot);
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
+=======
+
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 	if (!addr)
 		return -ENOMEM;
 	memset(addr, 0, PAGE_SIZE * num);
@@ -128,20 +140,50 @@ static int ion_heap_clear_pages(struct page **pages, int num, pgprot_t pgprot)
 	return 0;
 }
 
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
+=======
+static int ion_heap_sglist_zero(struct scatterlist *sgl, unsigned int nents,
+						pgprot_t pgprot)
+{
+	int p = 0;
+	int ret = 0;
+	struct sg_page_iter piter;
+	struct page *pages[32];
+
+	for_each_sg_page(sgl, &piter, nents, 0) {
+		pages[p++] = sg_page_iter_page(&piter);
+		if (p == ARRAY_SIZE(pages)) {
+			ret = ion_heap_clear_pages(pages, p, pgprot);
+			if (ret)
+				return ret;
+			p = 0;
+		}
+	}
+	if (p)
+		ret = ion_heap_clear_pages(pages, p, pgprot);
+
+	return ret;
+}
+
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 int ion_heap_buffer_zero(struct ion_buffer *buffer)
 {
 	struct sg_table *table = buffer->sg_table;
 	pgprot_t pgprot;
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 	struct scatterlist *sg;
 	int i, j, ret = 0;
 	struct page *pages[32];
 	int k = 0;
+=======
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 
 	if (buffer->flags & ION_FLAG_CACHED)
 		pgprot = PAGE_KERNEL;
 	else
 		pgprot = pgprot_writecombine(PAGE_KERNEL);
 
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 	for_each_sg(table->sgl, sg, table->nents, i) {
 		struct page *page = sg_page(sg);
 		unsigned long len = sg_dma_len(sg);
@@ -164,6 +206,22 @@ end:
 
 void ion_heap_freelist_add(struct ion_heap *heap, struct ion_buffer *buffer)
 {
+=======
+	return ion_heap_sglist_zero(table->sgl, table->nents, pgprot);
+}
+
+int ion_heap_pages_zero(struct page *page, size_t size, pgprot_t pgprot)
+{
+	struct scatterlist sg;
+
+	sg_init_table(&sg, 1);
+	sg_set_page(&sg, page, size, 0);
+	return ion_heap_sglist_zero(&sg, 1, pgprot);
+}
+
+void ion_heap_freelist_add(struct ion_heap *heap, struct ion_buffer *buffer)
+{
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 	spin_lock(&heap->free_lock);
 	list_add(&buffer->list, &heap->free_list);
 	heap->free_list_size += buffer->size;
@@ -219,7 +277,11 @@ size_t ion_heap_freelist_drain(struct ion_heap *heap, size_t size)
 	return _ion_heap_freelist_drain(heap, size, false);
 }
 
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 size_t ion_heap_freelist_drain_from_shrinker(struct ion_heap *heap, size_t size)
+=======
+size_t ion_heap_freelist_shrink(struct ion_heap *heap, size_t size)
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 {
 	return _ion_heap_freelist_drain(heap, size, true);
 }
@@ -255,6 +317,11 @@ int ion_heap_init_deferred_free(struct ion_heap *heap)
 	struct sched_param param = { .sched_priority = 0 };
 
 	INIT_LIST_HEAD(&heap->free_list);
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
+=======
+	heap->free_list_size = 0;
+	spin_lock_init(&heap->free_lock);
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 	init_waitqueue_head(&heap->waitqueue);
 	heap->task = kthread_run(ion_heap_deferred_free, heap,
 				 "%s", heap->name);
@@ -280,10 +347,17 @@ static int ion_heap_shrink(struct shrinker *shrinker, struct shrink_control *sc)
 
 	/*
 	 * shrink the free list first, no point in zeroing the memory if we're
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 	 * just going to reclaim it
 	 */
 	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE)
 		freed = ion_heap_freelist_drain(heap, to_scan * PAGE_SIZE) /
+=======
+	 * just going to reclaim it. Also, skip any possible page pooling.
+	 */
+	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE)
+		freed = ion_heap_freelist_shrink(heap, to_scan * PAGE_SIZE) /
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 				PAGE_SIZE;
 
 	to_scan -= freed;
@@ -333,7 +407,11 @@ struct ion_heap *ion_heap_create(struct ion_platform_heap *heap_data)
 	}
 
 	if (IS_ERR_OR_NULL(heap)) {
+<<<<<<< HEAD:drivers/staging/android/ion/ion_heap.c
 		pr_err("%s: error creating heap %s type %d base %pa size %zu\n",
+=======
+		pr_err("%s: error creating heap %s type %d base %lu size %zu\n",
+>>>>>>> a-3.10:drivers/staging/android/ion/ion_heap.c
 		       __func__, heap_data->name, heap_data->type,
 		       &heap_data->base, heap_data->size);
 		return ERR_PTR(-EINVAL);

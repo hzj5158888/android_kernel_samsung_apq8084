@@ -39,7 +39,11 @@
 #include "f_fs.c"
 #ifdef CONFIG_SND_PCM
 #include "f_audio_source.c"
+<<<<<<< HEAD
 #endif
+=======
+#include "f_midi.c"
+>>>>>>> a-3.10
 #include "f_mass_storage.c"
 #define USB_ETH_RNDIS y
 #include "f_diag.c"
@@ -113,6 +117,7 @@ static int composite_string_index;
 #define VENDOR_ID		0x18D1
 #define PRODUCT_ID		0x0001
 
+<<<<<<< HEAD
 #define ANDROID_DEVICE_NODE_NAME_LENGTH 11
 
 /* f_midi configuration */
@@ -124,6 +129,13 @@ static int composite_string_index;
 #define MIDI_BUFFER_SIZE    1024
 #define MIDI_QUEUE_LENGTH   32
 #endif
+=======
+/* f_midi configuration */
+#define MIDI_INPUT_PORTS    1
+#define MIDI_OUTPUT_PORTS   1
+#define MIDI_BUFFER_SIZE    256
+#define MIDI_QUEUE_LENGTH   32
+>>>>>>> a-3.10
 
 struct android_usb_function {
 	char *name;
@@ -2836,6 +2848,60 @@ static struct android_usb_function uasp_function = {
 	.bind_config	= uasp_function_bind_config,
 };
 
+static int midi_function_init(struct android_usb_function *f,
+					struct usb_composite_dev *cdev)
+{
+	struct midi_alsa_config *config;
+
+	config = kzalloc(sizeof(struct midi_alsa_config), GFP_KERNEL);
+	f->config = config;
+	if (!config)
+		return -ENOMEM;
+	config->card = -1;
+	config->device = -1;
+	return 0;
+}
+
+static void midi_function_cleanup(struct android_usb_function *f)
+{
+	kfree(f->config);
+}
+
+static int midi_function_bind_config(struct android_usb_function *f,
+						struct usb_configuration *c)
+{
+	struct midi_alsa_config *config = f->config;
+
+	return f_midi_bind_config(c, SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
+			MIDI_INPUT_PORTS, MIDI_OUTPUT_PORTS, MIDI_BUFFER_SIZE,
+			MIDI_QUEUE_LENGTH, config);
+}
+
+static ssize_t midi_alsa_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	struct android_usb_function *f = dev_get_drvdata(dev);
+	struct midi_alsa_config *config = f->config;
+
+	/* print ALSA card and device numbers */
+	return sprintf(buf, "%d %d\n", config->card, config->device);
+}
+
+static DEVICE_ATTR(alsa, S_IRUGO, midi_alsa_show, NULL);
+
+static struct device_attribute *midi_function_attributes[] = {
+	&dev_attr_alsa,
+	NULL
+};
+
+static struct android_usb_function midi_function = {
+	.name		= "midi",
+	.init		= midi_function_init,
+	.cleanup	= midi_function_cleanup,
+	.bind_config	= midi_function_bind_config,
+	.attributes	= midi_function_attributes,
+};
+
 static struct android_usb_function *supported_functions[] = {
 	&ffs_function,
 	&mbim_function,
@@ -2873,6 +2939,7 @@ static struct android_usb_function *supported_functions[] = {
 #endif
 #ifdef CONFIG_SND_PCM
 	&audio_source_function,
+<<<<<<< HEAD
 #endif
 	&uasp_function,
 	NULL
@@ -2904,6 +2971,12 @@ static void android_cleanup_functions(struct android_usb_function **functions)
 	}
 }
 
+=======
+	&midi_function,
+	NULL
+};
+
+>>>>>>> a-3.10
 static int android_init_functions(struct android_usb_function **functions,
 				  struct usb_composite_dev *cdev)
 {
@@ -3703,11 +3776,14 @@ static int android_bind(struct usb_composite_dev *cdev)
 	struct android_configuration *conf;
 	int			id, ret;
 
+<<<<<<< HEAD
 	/* Bind to the last android_dev that was probed */
 	dev = list_entry(android_dev_list.prev, struct android_dev, list_item);
 
 	dev->cdev = cdev;
 
+=======
+>>>>>>> a-3.10
 	/* Save the default handler */
 	dev->setup_complete = cdev->req->complete;
 
@@ -4191,6 +4267,7 @@ static int android_remove(struct platform_device *pdev)
 			break;
 	}
 
+<<<<<<< HEAD
 	if (dev) {
 		android_destroy_device(dev);
 		if (pdata && pdata->swfi_latency)
@@ -4245,6 +4322,12 @@ static int __init init(void)
 	if (ret) {
 		pr_err("%s(): Failed to register android"
 				 "platform driver\n", __func__);
+=======
+	err = usb_composite_probe(&android_usb_driver);
+	if (err) {
+		pr_err("%s: failed to probe driver %d", __func__, err);
+		goto err_probe;
+>>>>>>> a-3.10
 	}
 
 	/* HACK: exchange composite's setup with ours */
@@ -4255,7 +4338,19 @@ static int __init init(void)
 	composite_resume_func = android_usb_driver.gadget_driver.resume;
 	android_usb_driver.gadget_driver.resume = android_resume;
 
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+
+err_probe:
+	device_destroy(android_class, dev->dev->devt);
+err_create:
+	kfree(dev);
+err_dev:
+	class_destroy(android_class);
+	return err;
+>>>>>>> a-3.10
 }
 late_initcall(init);
 

@@ -367,6 +367,13 @@ int inet_diag_dump_one_icsk(struct inet_hashinfo *hashinfo,
 	struct sk_buff *rep;
 	struct sock *sk;
 	int err;
+<<<<<<< HEAD
+=======
+
+	sk = inet_diag_find_one_icsk(net, hashinfo, req);
+	if (IS_ERR(sk))
+		return PTR_ERR(sk);
+>>>>>>> a-3.10
 
 	sk = inet_diag_find_one_icsk(net, hashinfo, req);
 	if (IS_ERR(sk))
@@ -664,6 +671,7 @@ static inline bool valid_port_comparison(const struct inet_diag_bc_op *op,
 
 static bool valid_markcond(const struct inet_diag_bc_op *op, int len,
 			   int *min_len)
+<<<<<<< HEAD
 {
 	*min_len += sizeof(struct inet_diag_markcond);
 	return len >= *min_len;
@@ -672,6 +680,16 @@ static bool valid_markcond(const struct inet_diag_bc_op *op, int len,
 static int inet_diag_bc_audit(const struct nlattr *attr,
 			      const struct sk_buff *skb)
 {
+=======
+{
+	*min_len += sizeof(struct inet_diag_markcond);
+	return len >= *min_len;
+}
+
+static int inet_diag_bc_audit(const struct nlattr *attr,
+			      const struct sk_buff *skb)
+{
+>>>>>>> a-3.10
 	bool net_admin = ns_capable(sock_net(skb->sk)->user_ns, CAP_NET_ADMIN);
 	const void *bytecode, *bc;
 	int bytecode_len, len;

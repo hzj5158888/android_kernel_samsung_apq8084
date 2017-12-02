@@ -123,7 +123,11 @@ static void quota2_log(unsigned int hooknum,
 #endif  /* if+else CONFIG_NETFILTER_XT_MATCH_QUOTA2_LOG */
 
 static ssize_t quota_proc_read(struct file *file, char __user *buf,
+<<<<<<< HEAD
 			       size_t size, loff_t *ppos)
+=======
+			   size_t size, loff_t *ppos)
+>>>>>>> a-3.10
 {
 	struct xt_quota_counter *e = PDE_DATA(file_inode(file));
 	char tmp[24];
@@ -136,7 +140,11 @@ static ssize_t quota_proc_read(struct file *file, char __user *buf,
 }
 
 static ssize_t quota_proc_write(struct file *file, const char __user *input,
+<<<<<<< HEAD
 				size_t size, loff_t *ppos)
+=======
+                            size_t size, loff_t *ppos)
+>>>>>>> a-3.10
 {
 	struct xt_quota_counter *e = PDE_DATA(file_inode(file));
 	char buf[sizeof("18446744073709551616")];

@@ -221,10 +221,40 @@ struct mmc_supply {
 	struct regulator *vqmmc;	/* Optional Vccq supply */
 };
 
+<<<<<<< HEAD
 enum dev_state {
 	DEV_SUSPENDING = 1,
 	DEV_SUSPENDED,
 	DEV_RESUMED,
+=======
+/*
+ * X-axis for IO latency histogram support.
+ */
+static const u_int64_t latency_x_axis_us[] = {
+	100,
+	200,
+	300,
+	400,
+	500,
+	600,
+	700,
+	800,
+	900,
+	1000,
+	1200,
+	1400,
+	1600,
+	1800,
+	2000,
+	2500,
+	3000,
+	4000,
+	5000,
+	6000,
+	7000,
+	9000,
+	10000
+>>>>>>> a-3.10
 };
 
 struct mmc_host {
@@ -297,7 +327,7 @@ struct mmc_host {
 
 #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access */
 #define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control */
-#define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
+#define MMC_CAP2_FULL_PWR_CYCLE	(1 << 2)	/* Can do full power cycle */
 #define MMC_CAP2_NO_MULTI_READ	(1 << 3)	/* Multiblock reads don't work */
 #define MMC_CAP2_NO_SLEEP_CMD	(1 << 4)	/* Don't allow sleep command */
 #define MMC_CAP2_HS200_1_8V_SDR	(1 << 5)        /* can support */
@@ -423,6 +453,7 @@ struct mmc_host {
 	} embedded_sdio_data;
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_MMC_PERF_PROFILING
 	struct {
 
@@ -460,6 +491,17 @@ struct mmc_host {
 	atomic_t	log_count;
 	bool		mmc_core_cmd_logging;
 #endif
+=======
+#define MMC_IO_LAT_HIST_DISABLE         0
+#define MMC_IO_LAT_HIST_ENABLE          1
+#define MMC_IO_LAT_HIST_ZERO            2
+	int		latency_hist_enabled;
+	u_int64_t	latency_y_axis_read[ARRAY_SIZE(latency_x_axis_us) + 1];
+	u_int64_t	latency_reads_elems;
+	u_int64_t	latency_y_axis_write[ARRAY_SIZE(latency_x_axis_us) + 1];
+	u_int64_t	latency_writes_elems;
+
+>>>>>>> a-3.10
 	unsigned long		private[0] ____cacheline_aligned;
 };
 
@@ -509,8 +551,6 @@ int mmc_power_restore_host(struct mmc_host *host);
 
 void mmc_detect_change(struct mmc_host *, unsigned long delay);
 void mmc_request_done(struct mmc_host *, struct mmc_request *);
-
-int mmc_cache_ctrl(struct mmc_host *, u8);
 
 static inline void mmc_signal_sdio_irq(struct mmc_host *host)
 {

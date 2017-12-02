@@ -288,6 +288,7 @@ static int sdcardfs_read_super(struct vfsmount *mnt, struct super_block *sb,
 	atomic_inc(&lower_sb->s_active);
 	sdcardfs_set_lower_super(sb, lower_sb);
 
+<<<<<<< HEAD
 	sb->s_stack_depth = lower_sb->s_stack_depth + 1;
 	if (sb->s_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
 		pr_err("sdcardfs: maximum fs stacking depth exceeded\n");
@@ -295,6 +296,8 @@ static int sdcardfs_read_super(struct vfsmount *mnt, struct super_block *sb,
 		goto out_sput;
 	}
 
+=======
+>>>>>>> a-3.10
 	/* inherit maxbytes from lower file system */
 	sb->s_maxbytes = lower_sb->s_maxbytes;
 

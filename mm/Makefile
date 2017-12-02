@@ -60,7 +60,10 @@ obj-$(CONFIG_DEBUG_KMEMLEAK) += kmemleak.o
 obj-$(CONFIG_DEBUG_KMEMLEAK_TEST) += kmemleak-test.o
 obj-$(CONFIG_CLEANCACHE) += cleancache.o
 obj-$(CONFIG_MEMORY_ISOLATION) += page_isolation.o
+<<<<<<< HEAD
 obj-$(CONFIG_PAGE_OWNER) += pageowner.o
 obj-$(CONFIG_ZBUD)	+= zbud.o
+=======
+>>>>>>> a-3.10
 obj-$(CONFIG_ZPOOL)	+= zpool.o
 obj-$(CONFIG_ZSMALLOC)	+= zsmalloc.o

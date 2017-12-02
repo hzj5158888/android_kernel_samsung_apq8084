@@ -1325,7 +1325,20 @@ retry_encrypt:
 	return PTR_ERR(fio->encrypted_page);
 }
 
+<<<<<<< HEAD
 static inline bool need_inplace_update(struct f2fs_io_info *fio)
+=======
+static int get_data_block_bmap(struct inode *inode, sector_t iblock,
+			struct buffer_head *bh_result, int create)
+{
+	/* Block number less than F2FS MAX BLOCKS */
+	if (unlikely(iblock >= max_file_size(0)))
+		return -EFBIG;
+	return get_data_block_ro(inode, iblock, bh_result, create);
+}
+
+static int f2fs_read_data_page(struct file *file, struct page *page)
+>>>>>>> a-3.10
 {
 	struct inode *inode = fio->page->mapping->host;
 
@@ -2042,7 +2055,12 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 	return err;
 }
 
+<<<<<<< HEAD
 void f2fs_invalidate_page(struct page *page, unsigned long offset)
+=======
+static void f2fs_invalidate_data_page(struct page *page, unsigned int offset,
+				      unsigned int length)
+>>>>>>> a-3.10
 {
 	struct inode *inode = page->mapping->host;
 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
@@ -2143,6 +2161,7 @@ static int f2fs_set_data_page_dirty(struct page *page)
 
 static sector_t f2fs_bmap(struct address_space *mapping, sector_t block)
 {
+<<<<<<< HEAD
 	struct inode *inode = mapping->host;
 
 	if (f2fs_has_inline_data(inode))
@@ -2204,6 +2223,9 @@ int f2fs_migrate_page(struct address_space *mapping,
 	migrate_page_copy(newpage, page);
 
 	return MIGRATEPAGE_SUCCESS;
+=======
+	return generic_block_bmap(mapping, block, get_data_block_bmap);
+>>>>>>> a-3.10
 }
 #endif
 

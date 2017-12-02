@@ -426,6 +426,7 @@ static void fiq_debugger_irq_exec(struct fiq_debugger_state *state, char *cmd)
 static void fiq_debugger_help(struct fiq_debugger_state *state)
 {
 	fiq_debugger_printf(&state->output,
+<<<<<<< HEAD:drivers/staging/android/fiq_debugger/fiq_debugger.c
 			"FIQ Debugger commands:\n");
 	if (sysrq_on()) {
 		fiq_debugger_printf(&state->output,
@@ -459,6 +460,32 @@ static void fiq_debugger_help(struct fiq_debugger_state *state)
 	if (fiq_kgdb_enable) {
 		fiq_debugger_printf(&state->output,
 			" kgdb          Enter kernel debugger\n");
+=======
+				"FIQ Debugger commands:\n"
+				" pc            PC status\n"
+				" regs          Register dump\n"
+				" allregs       Extended Register dump\n"
+				" bt            Stack trace\n");
+	fiq_debugger_printf(&state->output,
+				" reboot [<c>]  Reboot with command <c>\n"
+				" reset [<c>]   Hard reset with command <c>\n"
+				" irqs          Interupt status\n"
+				" kmsg          Kernel log\n"
+				" version       Kernel version\n");
+	fiq_debugger_printf(&state->output,
+				" sleep         Allow sleep while in FIQ\n"
+				" nosleep       Disable sleep while in FIQ\n"
+				" console       Switch terminal to console\n"
+				" cpu           Current CPU\n"
+				" cpu <number>  Switch to CPU<number>\n");
+	fiq_debugger_printf(&state->output,
+				" ps            Process list\n"
+				" sysrq         sysrq options\n"
+				" sysrq <param> Execute sysrq with <param>\n");
+#ifdef CONFIG_KGDB
+	fiq_debugger_printf(&state->output,
+				" kgdb          Enter kernel debugger\n");
+>>>>>>> a-3.10:drivers/staging/android/fiq_debugger/fiq_debugger.c
 #endif
 }
 
@@ -490,6 +517,7 @@ static bool fiq_debugger_fiq_exec(struct fiq_debugger_state *state,
 	if (!strcmp(cmd, "help") || !strcmp(cmd, "?")) {
 		fiq_debugger_help(state);
 	} else if (!strcmp(cmd, "pc")) {
+<<<<<<< HEAD:drivers/staging/android/fiq_debugger/fiq_debugger.c
 		if (sysrq_on())
 			fiq_debugger_dump_pc(&state->output, regs);
 	} else if (!strcmp(cmd, "regs")) {
@@ -502,6 +530,15 @@ static bool fiq_debugger_fiq_exec(struct fiq_debugger_state *state,
 		if (sysrq_on())
 			fiq_debugger_dump_stacktrace(&state->output, regs,
 						     100, svc_sp);
+=======
+		fiq_debugger_dump_pc(&state->output, regs);
+	} else if (!strcmp(cmd, "regs")) {
+		fiq_debugger_dump_regs(&state->output, regs);
+	} else if (!strcmp(cmd, "allregs")) {
+		fiq_debugger_dump_allregs(&state->output, regs);
+	} else if (!strcmp(cmd, "bt")) {
+		fiq_debugger_dump_stacktrace(&state->output, regs, 100, svc_sp);
+>>>>>>> a-3.10:drivers/staging/android/fiq_debugger/fiq_debugger.c
 	} else if (!strncmp(cmd, "reset", 5)) {
 		cmd += 5;
 		while (*cmd == ' ')
@@ -516,12 +553,18 @@ static bool fiq_debugger_fiq_exec(struct fiq_debugger_state *state,
 	} else if (!strcmp(cmd, "irqs")) {
 		fiq_debugger_dump_irqs(state);
 	} else if (!strcmp(cmd, "kmsg")) {
+<<<<<<< HEAD:drivers/staging/android/fiq_debugger/fiq_debugger.c
 		if (sysrq_on())
 			fiq_debugger_dump_kernel_log(state);
 	} else if (!strcmp(cmd, "version")) {
 		if (sysrq_on())
 			fiq_debugger_printf(&state->output, "%s\n",
 					    linux_banner);
+=======
+		fiq_debugger_dump_kernel_log(state);
+	} else if (!strcmp(cmd, "version")) {
+		fiq_debugger_printf(&state->output, "%s\n", linux_banner);
+>>>>>>> a-3.10:drivers/staging/android/fiq_debugger/fiq_debugger.c
 	} else if (!strcmp(cmd, "sleep")) {
 		state->no_sleep = false;
 		fiq_debugger_printf(&state->output, "enabling sleep\n");
@@ -533,17 +576,26 @@ static bool fiq_debugger_fiq_exec(struct fiq_debugger_state *state,
 		fiq_debugger_uart_flush(state);
 		state->console_enable = true;
 	} else if (!strcmp(cmd, "cpu")) {
+<<<<<<< HEAD:drivers/staging/android/fiq_debugger/fiq_debugger.c
 		if (sysrq_on())
 			fiq_debugger_printf(&state->output, "cpu %d\n",
 					    state->current_cpu);
 	} else if (!strncmp(cmd, "cpu ", 4) && sysrq_on()) {
+=======
+		fiq_debugger_printf(&state->output, "cpu %d\n", state->current_cpu);
+	} else if (!strncmp(cmd, "cpu ", 4)) {
+>>>>>>> a-3.10:drivers/staging/android/fiq_debugger/fiq_debugger.c
 		unsigned long cpu = 0;
 		if (strict_strtoul(cmd + 4, 10, &cpu) == 0)
 			fiq_debugger_switch_cpu(state, cpu);
 		else
 			fiq_debugger_printf(&state->output, "invalid cpu\n");
+<<<<<<< HEAD:drivers/staging/android/fiq_debugger/fiq_debugger.c
 		fiq_debugger_printf(&state->output, "cpu %d\n",
 				    state->current_cpu);
+=======
+		fiq_debugger_printf(&state->output, "cpu %d\n", state->current_cpu);
+>>>>>>> a-3.10:drivers/staging/android/fiq_debugger/fiq_debugger.c
 	} else {
 		if (state->debug_busy) {
 			fiq_debugger_printf(&state->output,

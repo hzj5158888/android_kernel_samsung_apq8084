@@ -37,7 +37,10 @@ int iterate_dir(struct file *file, struct dir_context *ctx)
 
 	res = -ENOENT;
 	if (!IS_DEADDIR(inode)) {
+<<<<<<< HEAD
 		ctx->romnt = (inode->i_sb->s_flags & MS_RDONLY);
+=======
+>>>>>>> a-3.10
 		if (file->f_op->iterate) {
 			ctx->pos = file->f_pos;
 			res = file->f_op->iterate(file, ctx);
@@ -53,6 +56,7 @@ out:
 	return res;
 }
 EXPORT_SYMBOL(iterate_dir);
+<<<<<<< HEAD
 
 static bool hide_name(const char *name, int namlen)
 {
@@ -61,6 +65,8 @@ static bool hide_name(const char *name, int namlen)
 			return true;
 	return false;
 }
+=======
+>>>>>>> a-3.10
 
 /*
  * Traditional linux readdir() handling..

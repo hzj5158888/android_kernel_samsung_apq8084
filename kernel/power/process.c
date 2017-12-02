@@ -37,7 +37,13 @@ static int try_to_freeze_tasks(bool user_only)
 	unsigned int elapsed_msecs;
 	bool wakeup = false;
 	int sleep_usecs = USEC_PER_MSEC;
+<<<<<<< HEAD
 	char suspend_abort[MAX_SUSPEND_ABORT_LEN];
+=======
+#ifdef CONFIG_PM_SLEEP
+	char suspend_abort[MAX_SUSPEND_ABORT_LEN];
+#endif
+>>>>>>> a-3.10
 
 	do_gettimeofday(&start);
 
@@ -71,9 +77,17 @@ static int try_to_freeze_tasks(bool user_only)
 			break;
 
 		if (pm_wakeup_pending()) {
+<<<<<<< HEAD
 			pm_get_active_wakeup_sources(suspend_abort,
 				MAX_SUSPEND_ABORT_LEN);
 			log_suspend_abort_reason(suspend_abort);
+=======
+#ifdef CONFIG_PM_SLEEP
+			pm_get_active_wakeup_sources(suspend_abort,
+				MAX_SUSPEND_ABORT_LEN);
+			log_suspend_abort_reason(suspend_abort);
+#endif
+>>>>>>> a-3.10
 			wakeup = true;
 			break;
 		}
@@ -93,14 +107,18 @@ static int try_to_freeze_tasks(bool user_only)
 	do_div(elapsed_msecs64, NSEC_PER_MSEC);
 	elapsed_msecs = elapsed_msecs64;
 
-	if (todo) {
+	if (wakeup) {
 		printk("\n");
-		printk(KERN_ERR "Freezing of tasks %s after %d.%03d seconds "
-		       "(%d tasks refusing to freeze, wq_busy=%d):\n",
-		       wakeup ? "aborted" : "failed",
+		printk(KERN_ERR "Freezing of tasks aborted after %d.%03d seconds",
+		       elapsed_msecs / 1000, elapsed_msecs % 1000);
+	} else if (todo) {
+		printk("\n");
+		printk(KERN_ERR "Freezing of tasks failed after %d.%03d seconds"
+		       " (%d tasks refusing to freeze, wq_busy=%d):\n",
 		       elapsed_msecs / 1000, elapsed_msecs % 1000,
 		       todo - wq_busy, wq_busy);
 
+<<<<<<< HEAD
 #ifdef CONFIG_SEC_PM_DEBUG
 		if (wakeup) {
 			printk(KERN_ERR "Freezing of %s aborted (%d) (%s)\n",
@@ -118,6 +136,15 @@ static int try_to_freeze_tasks(bool user_only)
 			} while_each_thread(g, p);
 			read_unlock(&tasklist_lock);
 		}
+=======
+		read_lock(&tasklist_lock);
+		do_each_thread(g, p) {
+			if (p != current && !freezer_should_skip(p)
+			    && freezing(p) && !frozen(p))
+				sched_show_task(p);
+		} while_each_thread(g, p);
+		read_unlock(&tasklist_lock);
+>>>>>>> a-3.10
 	} else {
 		printk("(elapsed %d.%03d seconds) ", elapsed_msecs / 1000,
 			elapsed_msecs % 1000);

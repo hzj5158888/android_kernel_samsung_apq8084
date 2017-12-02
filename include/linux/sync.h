@@ -14,13 +14,13 @@
 #define _LINUX_SYNC_H
 
 #include <linux/types.h>
-#ifdef __KERNEL__
-
 #include <linux/kref.h>
 #include <linux/ktime.h>
 #include <linux/list.h>
 #include <linux/spinlock.h>
 #include <linux/wait.h>
+
+#include "uapi/sync.h"
 
 struct sync_timeline;
 struct sync_pt;
@@ -345,6 +345,7 @@ int sync_fence_cancel_async(struct sync_fence *fence,
  */
 int sync_fence_wait(struct sync_fence *fence, long timeout);
 
+<<<<<<< HEAD:include/linux/sync.h
 /**
  * sync_fence_log() - log the details of the fence in the kernel log
  * @fence:	fence to log
@@ -445,4 +446,6 @@ struct sync_fence_info_data {
 #define SYNC_IOC_FENCE_INFO	_IOWR(SYNC_IOC_MAGIC, 2,\
 	struct sync_fence_info_data)
 
+=======
+>>>>>>> a-3.10:drivers/staging/android/sync.h
 #endif /* _LINUX_SYNC_H */

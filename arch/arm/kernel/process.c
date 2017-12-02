@@ -634,6 +634,7 @@ int in_gate_area_no_mm(unsigned long addr)
 
 const char *arch_vma_name(struct vm_area_struct *vma)
 {
+<<<<<<< HEAD
 	if (is_gate_vma(vma))
 		return "[vectors]";
 	else if (vma->vm_mm && vma->vm_start == vma->vm_mm->context.sigpage)
@@ -645,17 +646,33 @@ const char *arch_vma_name(struct vm_area_struct *vma)
 }
 
 static struct page *signal_page;
+=======
+	return is_gate_vma(vma) ? "[vectors]" :
+		(vma->vm_mm && vma->vm_start == vma->vm_mm->context.sigpage) ?
+		 "[sigpage]" : NULL;
+}
+
+>>>>>>> a-3.10
 extern struct page *get_signal_page(void);
 
 int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 {
 	struct mm_struct *mm = current->mm;
+<<<<<<< HEAD
 	unsigned long addr;
 	int ret;
 
 	if (!signal_page)
 		signal_page = get_signal_page();
 	if (!signal_page)
+=======
+	struct page *page;
+	unsigned long addr;
+	int ret;
+
+	page = get_signal_page();
+	if (!page)
+>>>>>>> a-3.10
 		return -ENOMEM;
 
 	down_write(&mm->mmap_sem);
@@ -667,7 +684,11 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
 
 	ret = install_special_mapping(mm, addr, PAGE_SIZE,
 		VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+<<<<<<< HEAD
 		&signal_page);
+=======
+		&page);
+>>>>>>> a-3.10
 
 	if (ret == 0)
 		mm->context.sigpage = addr;
