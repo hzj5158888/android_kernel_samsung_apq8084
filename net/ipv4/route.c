@@ -1574,10 +1574,6 @@ static int __mkroute_input(struct sk_buff *skb,
 	rth->rt_is_input = 1;
 	rth->rt_iif 	= 0;
 	rth->rt_pmtu	= 0;
-<<<<<<< HEAD
-	rth->rt_uid 	= 0;
-=======
->>>>>>> parent of 99ed872... net: core: Support UID-based routing.
 	rth->rt_gateway	= 0;
 	rth->rt_uses_gateway = 0;
 	INIT_LIST_HEAD(&rth->rt_uncached);
