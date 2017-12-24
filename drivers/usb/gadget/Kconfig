@@ -973,15 +973,6 @@ config USB_ANDROID_RNDIS_DWORD_ALIGNED
 	help
 		Provides dword aligned for DMA controller.
 
-<<<<<<< HEAD
-=======
-config USB_ANDROID_USBNET
-	boolean "Android gadget usbnet function"
-	depends on USB_ANDROID
-	help
-	  Provides usbnet function for android gadget driver.
-
->>>>>>> da23da7... usb: gadget: fix build warning
 if TTY
 
 config USB_CDC_COMPOSITE
