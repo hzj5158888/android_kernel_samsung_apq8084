@@ -1472,11 +1472,6 @@ void ip_send_unicast_reply(struct sock *sk, struct sk_buff *skb, __be32 daddr,
 	struct rtable *rt = skb_rtable(skb);
 	struct net *net = sock_net(sk);
 	struct sk_buff *nskb;
-<<<<<<< HEAD
-=======
-	struct sock *sk;
-	struct inet_sock *inet;
->>>>>>> 7d0b6a1... ipv4: dst_entry leak in ip_send_unicast_reply()
 	int err;
 
 	if (ip_options_echo(&replyopts.opt.opt, skb))
@@ -1530,11 +1525,6 @@ void ip_send_unicast_reply(struct sock *sk, struct sk_buff *skb, __be32 daddr,
 		ip_push_pending_frames(sk, &fl4);
 	}
 out:
-<<<<<<< HEAD
-=======
-	put_cpu_var(unicast_sock);
-
->>>>>>> 7d0b6a1... ipv4: dst_entry leak in ip_send_unicast_reply()
 	ip_rt_put(rt);
 }
 
