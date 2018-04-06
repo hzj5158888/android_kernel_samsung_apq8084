@@ -114,17 +114,18 @@ tSirRetStatus
 sysBbtProcessMessageCore(tpAniSirGlobal pMac, tpSirMsgQ pMsg, tANI_U32 type,
                          tANI_U32 subType)
 {
-<<<<<<< HEAD
     static tANI_U32 lastDeauthPacketTime = 0;
-=======
-    tANI_U32 framecount;
->>>>>>> 842f64d... wlan: Limit the Deauth Frames sent by AP to STA
     tSirRetStatus ret;
     void*         pBd;
     tMgmtFrmDropReason dropReason;
     vos_pkt_t  *pVosPkt = (vos_pkt_t *)pMsg->bodyptr;
     VOS_STATUS  vosStatus =
               WDA_DS_PeekRxPacketInfo( pVosPkt, (v_PVOID_t *)&pBd, VOS_FALSE );
+#ifdef WLAN_FEATURE_11W
+    tANI_U8         sessionId;
+    tpPESession     psessionEntry;
+    tpSirMacMgmtHdr pMacHdr;
+#endif /* WLAN_FEATURE_11W */
 
     pMac->sys.gSysBbtReceived++;
 
@@ -141,7 +142,6 @@ sysBbtProcessMessageCore(tpAniSirGlobal pMac, tpSirMsgQ pMsg, tANI_U32 type,
 
     if(type == SIR_MAC_MGMT_FRAME)
     {
-<<<<<<< HEAD
             if ((subType == SIR_MAC_MGMT_DEAUTH) && (pMac->sys.gSysFrameCount[type][subType] >= MAX_DEAUTH_ALLOWED))
             {
                 tANI_U32 timeNow = adf_os_ticks();
@@ -163,25 +163,6 @@ sysBbtProcessMessageCore(tpAniSirGlobal pMac, tpSirMsgQ pMsg, tANI_U32 type,
                         goto fail;
                 }
             }
-=======
-            /*
-             * Drop beacon frames in deferred state to avoid VOSS run out of
-             * message wrappers.
-             */
-            if ((subType == SIR_MAC_MGMT_BEACON) &&
-                (!limIsSystemInScanState(pMac)) &&
-                (true != GET_LIM_PROCESS_DEFD_MESGS(pMac)) &&
-                !pMac->lim.gLimSystemInScanLearnMode) {
-                VOS_TRACE(VOS_MODULE_ID_SYS, VOS_TRACE_LEVEL_INFO_HIGH,
-                          FL("dropping received beacon in deffered state"));
-                goto fail;
-            }
-
-            if ((subType == SIR_MAC_MGMT_DEAUTH ||
-                 subType == SIR_MAC_MGMT_DISASSOC)&&
-                lim_is_deauth_diassoc_for_drop(pMac, pBd))
-                goto fail;
->>>>>>> 842f64d... wlan: Limit the Deauth Frames sent by AP to STA
 
             if (subType == SIR_MAC_MGMT_DEAUTH)
             {
@@ -196,24 +177,8 @@ sysBbtProcessMessageCore(tpAniSirGlobal pMac, tpSirMsgQ pMsg, tANI_U32 type,
                        MAC_ADDR_ARRAY(pMacHdr->sa),
                        MAC_ADDR_ARRAY(pMacHdr->bssId),
                        pMac->sys.gSysFrameCount[type][subType] ););
+                lastDeauthPacketTime = adf_os_ticks();
             }
-<<<<<<< HEAD
-=======
-            if (subType == SIR_MAC_MGMT_DISASSOC)
-            {
-                tpSirMacMgmtHdr pMacHdr = WDA_GET_RX_MAC_HEADER(pBd);
-                PELOGE(sysLog( pMac, LOGE,
-                       FL("DISASSOC frame allowed: "
-                       "da: " MAC_ADDRESS_STR ", "
-                       "sa: " MAC_ADDRESS_STR ", "
-                       "bssid: " MAC_ADDRESS_STR ", "
-                       "DISASSOC count so far: %d\n"),
-                       MAC_ADDR_ARRAY(pMacHdr->da),
-                       MAC_ADDR_ARRAY(pMacHdr->sa),
-                       MAC_ADDR_ARRAY(pMacHdr->bssId),
-                       pMac->sys.gSysFrameCount[type][subType] ););
-            }
->>>>>>> 842f64d... wlan: Limit the Deauth Frames sent by AP to STA
 
             if( (dropReason = limIsPktCandidateForDrop(pMac, pBd, subType)) != eMGMT_DROP_NO_DROP)
             {
